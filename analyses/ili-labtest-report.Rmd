@@ -25,14 +25,14 @@ theme_set(theme_bw())
 
 In December 2019 an outbreak of novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening few weeks, case counts have grown substantially. As of this writing, there are over 800 confirmed cases and at least 25 deaths of what is currently named 2019-nCoV. It is now understood that the virus is likely capable of person to person spread, with a preliminary [R0 estimate](https://www.who.int/news-room/detail/23-01-2020-statement-on-t) of 1.2 - 2.5. 
 
-Although no sustained human to human transmission has been observed outside of China, the possibility of unrecognized spread in other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza for the 2019-2020 flu season to trends from previous seasons.
+Although no sustained human to human transmission has been observed outside of China, the possibility of unrecognized spread in other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza for the 2019-2020 flu season to trends from previous seasons. If it were the case that 2019-nCoV were circulating unobserved in the United States, we might expect to see recent changes in the proportion of ILI speciments that test negative for influenza relative to previous seasons.
 
 
 ## Methods
 
 We downloaded publicly available ILINet and WHO-NREVSS data for the national level and HHS Region 10. HHS Region 10 is located in the northwest of the US, where ILI has shown abnormally high levels this season. Region 10 also contains Washington state, where the first case of nCoV was detected in the US.
 
-From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc..). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. These data have been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time. Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
+From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. These data have been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time. Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
 
 As a first approximation to compute a metric of similarity between the two metrics, we chose to divide the percent positivity from NREVSS by the wILI. The resulting ratio should be smaller when wILI values are high relative to the percent positivity of clinical tests. Therefore, low values of this metric would indicate that there is lower percent positivity than ``expected`` given the current levels of wILI. 
 
@@ -42,10 +42,9 @@ The code used to produce this report is available on GitHub at https://github.co
 
 ## Results
 
-We plot three panels for each region considered (national level and HHS Region 10). 
-We do not detect strong signal of anomalous patterns between ILI rates and percent positivity with lab data. 
-At the National level the current season looks similar to past seasons (Figure \ref{fig:national-plot}).
-In recent weeks in region 10, the ratio defined above is smaller than it has been in the past 5 years, although qualitatively it does not appear to be substantially lower than previous years (Figure \ref{fig:region10-plot}).
+We plot three panels for each region considered (national level and HHS Region 10). We do not detect strong signal of anomalous patterns between ILI rates and percent positivity with lab data. At the National level the current season looks similar to past seasons (Figure \ref{fig:national-plot}). In recent weeks in region 10, the ratio defined above is smaller than it has been in the past 5 years, although qualitatively it does not appear to be substantially lower than previous years (Figure \ref{fig:region10-plot}). In recent weeks there is a trend of a lower fraction of clinical speciments testing negative for influenza relative to wILI, but these changes cannot be said to be sustained at this time, and are still well within historical norms.
+
+Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020.
 
 
 ```{r get-nat-data, cache=TRUE}
