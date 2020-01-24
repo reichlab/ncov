@@ -136,3 +136,70 @@ p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, colo
 grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 ```
 
+#### Influenza-like illness not attributable to influenza
+
+Another measure of influenza illness not attributable to influenza can be calculated as follows:
+
+$$\text{ILI-} = (\text{proportion of tests positive for influenza}) \times \text{wILI}$$
+
+It is important to note that reported wILI can vary substantially due to differences in the types of health care providers reporting into ILInet: some increases in reported wILI from one season to another may be driven in part by changes in provider type make up.  An approximate way to adjust for this is by dividing reported wILI by the baseline for a given region and season.  This results in the following calculation of a \textbf{r}elative ILI-.
+
+$$\text{rILI-} = (\text{proportion of tests positive for influenza}) \times \frac{\text{wILI}}{\text{baseline level for ILI}}$$
+
+
+```{r get-all-reg-data, cache=TRUE}
+## regional level
+dat <- ilinet(region = "hhs")# %>% filter(region=="Region 10")
+
+labdat <- who_nrevss(region = "hhs") 
+
+alldat <- labdat$clinical_labs %>% 
+  left_join(dat)
+
+alldat$season_week <- ifelse(
+  alldat$week <= 30,
+  alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
+  alldat$week - 30
+)
+
+alldat$season <- ifelse(
+  alldat$week <= 39,
+  paste0(alldat$year - 1, "/", alldat$year),
+  paste0(alldat$year, "/", alldat$year + 1)
+)
+```
+
+```{r all-region-plot-ILI-, fig.cap="\\label{fig:region10-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom).", fig.height = 9}
+p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, x=season_week, color=season)) + 
+  geom_line() +
+  ylab("(1 - proportion positive) * wILI") + xlab(NULL) +
+  theme(legend.position = "bottom") +
+  xlab("season week") +
+  facet_wrap( ~ region, ncol = 5) +
+  ggtitle("(1 - proportion positive) * wILI")
+
+
+alldat2 <- alldat %>%
+  mutate(
+    region = cdcfluutils::to_standard_location_code(region)
+  ) %>%
+  left_join(
+    cdcfluutils::flu_onset_baselines %>%
+      mutate(
+        region = cdcfluutils::to_standard_location_code(region)
+      ),
+    by = c("region", "season")
+  )
+
+
+p_ilineg2 <- ggplot(alldat2, aes(y=(100 - percent_positive) * (weighted_ili/baseline) / 100, x=season_week, color=season)) + 
+  geom_line() +
+  ylab("(1 - proportion positive) * (wILI/baseline)") + xlab(NULL) +
+  theme(legend.position = "bottom") +
+  xlab("season week") +
+  facet_wrap( ~ region, ncol = 5) +
+  ggtitle("(1 - proportion positive) * (wILI/regional baseline)")
+
+
+grid.arrange(p_ilineg, p_ilineg2, nrow=2)
+```
