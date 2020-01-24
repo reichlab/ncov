@@ -1,0 +1,137 @@
+---
+title: Analysis of excess influenza-like illness during the novel corona virus (2020)
+  outbreak
+author: "Nicholas G Reich, Caitlin Rivers"
+date: "`r Sys.time()` CET"
+output:  
+    pdf_document: 
+        keep_tex:  true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+
+library(tidyverse)
+library(cdcfluview)
+library(MMWRweek)
+library(gridExtra)
+
+theme_set(theme_bw())
+```
+
+
+## Introduction 
+
+From Caitlin: Is there any chance that what we are observing this year with our bad flu season is actually nCoV?  Is the delta between ILI and flu positives what you would expect? Is there more than usual wILI that could be attributable to more widely spread nCoV?
+
+## Methods
+
+We downloaded publicly available ILINet and WHO-NREVSS data for the national level and HHS Region 10. HHS Region 10 is the northwest of  the US, where ILI has shown abnormally high levels this season and contains Washington state, where the initial case of nCoV was detected in the US.
+From the ILINet dataset, we downloaded the measure of weighted influenza-like illness (wILI), which measures, on a weekly scale, the percentage of doctor's office visits at sentinel providers had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc..). 
+For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those speciments that tested positive for influenza. 
+These data has been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time.
+Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
+
+As a first approximation to compute a metric of similarity between the two metrics, we chose to divide the percent positivity from NREVSS by the wILI. 
+The resulting ratio should be smaller when wILI values are high relative to the percent positivity of clinical tests. Therefore, low values of this metric would indicate that there is lower percent positivity than ``expected'' given the current levels of wILI. 
+We note that a limitation of this metric is that wILI values can be quite small, which could lead to unstable estimates, since this number is in the denominator.
+
+The code used to produce this report is available on GitHub at https://github.com/reichlab/ncov.
+
+## Results
+
+We plot three panels for each region considered (national level and HHS Region 10). 
+We do not detect strong signal of anomalous patterns between ILI rates and percent positivity with lab data. 
+At the National level the current season looks similar to past seasons (Figure \ref{fig:national-plot}).
+In recent weeks in region 10, the ratio defined above is smaller than it has been in the past 5 years, although qualitatively it does not appear to be substantially lower than previous years (Figure \ref{fig:region10-plot}).
+
+
+```{r get-nat-data, cache=TRUE}
+## national level
+dat <- ilinet(region = "national")
+
+labdat <- who_nrevss(region = "national")
+
+alldat <- left_join(labdat$clinical_labs, dat)
+
+alldat$season_week <- ifelse(
+    alldat$week <= 30,
+    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
+    alldat$week - 30
+)
+
+alldat$season <- ifelse(
+    alldat$week <= 30,
+    paste0(alldat$year - 1, "/", alldat$year),
+    paste0(alldat$year, "/", alldat$year + 1)
+)
+```
+
+```{r national-plot, fig.cap="\\label{fig:national-plot}National level plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI)."}
+
+# ggplot(alldat, aes(y=percent_positive/weighted_ili, x=week_start)) + 
+#     geom_point() +
+#     scale_x_date(limits=as.Date(c("2015-10-01", Sys.Date())))
+
+p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
+    geom_line() + 
+    ggtitle("National level") + 
+    ylab("wILI") + xlab(NULL) +
+    theme(legend.position = "none")
+p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
+    geom_line()+ 
+    ylab("% positive") + xlab(NULL) +
+    theme(legend.position = "none")
+p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
+    geom_line() + 
+    ylab("% positive/wILI") + xlab(NULL) +
+    theme(legend.position = "bottom") +
+    xlab("season week")
+
+grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
+```
+
+```{r get-reg10-data, cache=TRUE}
+## regional level
+dat <- ilinet(region = "hhs") %>% filter(region=="Region 10")
+
+labdat <- who_nrevss(region = "hhs") 
+
+alldat <- labdat$clinical_labs %>% 
+    filter(region=="Region 10") %>%
+    left_join(dat)
+
+alldat$season_week <- ifelse(
+    alldat$week <= 30,
+    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
+    alldat$week - 30
+)
+
+alldat$season <- ifelse(
+    alldat$week <= 30,
+    paste0(alldat$year - 1, "/", alldat$year),
+    paste0(alldat$year, "/", alldat$year + 1)
+)
+```
+
+```{r region10-plot, fig.cap="\\label{fig:region10-plot}US HHS Region 10 plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI)."}
+p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
+    geom_line() + ggtitle("HHS Region 10") + 
+    ylab("wILI") + xlab(NULL) +
+    theme(legend.position = "none")
+
+p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
+    geom_line() + 
+    ylab("% positive") + xlab(NULL) +
+    theme(legend.position = "none")
+
+p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
+    geom_line() +
+    ylab("% positive/wILI") + xlab(NULL) +
+    theme(legend.position = "bottom") +
+    xlab("season week")
+
+grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
+```
+
