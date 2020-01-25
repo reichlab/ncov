@@ -1,7 +1,6 @@
 ---
-title: Analysis of excess influenza-like illness during the novel corona virus (2020)
-  outbreak
-author: "Caitlin Rivers, Evan L. Ray, Nicholas G Reich"
+title: Looking for evidence of a high burden of 2019-nCoV in the United States from influenza-like illness data
+author: "Caitlin Rivers, Evan L. Ray, Nicholas G. Reich"
 date: "`r Sys.time()` CET"
 output:  
     pdf_document: 
@@ -37,9 +36,11 @@ We downloaded publicly available ILINet and WHO-NREVSS data for the national and
 
 From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. These data have been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time. Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
 
+The code used to produce this report is available on GitHub at https://github.com/reichlab/ncov.
+
 #### Influenza-like illness not attributable to influenza
 
-One possible measure of influenza illness not attributable to influenza can be calculated as follows:
+One possible measure of influenza illness not attributable to influenza (ILI-) can be calculated as follows:
 
 $$\text{ILI-} = (1 - \text{proportion of tests positive for influenza}) \times \text{wILI}$$
 
@@ -53,11 +54,10 @@ $$\text{rILI-} = (1 - \text{proportion of tests positive for influenza}) \times 
 We note that a limitation of this metric is that wILI values can be quite small, which could lead to unstable estimates, since this number is in the denominator.
 -->
 
-The code used to produce this report is available on GitHub at https://github.com/reichlab/ncov.
 
 ## Results
 
-We plot three panels for each region considered (national level and HHS Region 10). We do not detect strong signal of anomalous patterns between ILI rates and percent positivity with lab data. At the National level the current season looks similar to past seasons (Figure \ref{fig:national-plot}). In recent weeks in region 10, the ratio defined above is smaller than it has been in the past 5 years, although qualitatively it does not appear to be substantially lower than previous years (Figure \ref{fig:region10-plot}). In recent weeks there is a trend of a lower fraction of clinical speciments testing negative for influenza relative to wILI, but these changes cannot be said to be sustained at this time, and are still well within historical norms.
+We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 1). We do not observe strong signal of anomalous patterns of ILI rates that are not due to influenza. In several regions the fraction of ILI not attributable to influenza is near or above the highest observed rates in previous seasons, although qualitatively it does not appear to be substantially higher than previous years. In recent weeks there is a trend of a lower fraction of clinical speciments testing negative for influenza relative to wILI, but these changes cannot be said to be sustained at this time, and are still well within historical norms.
 
 Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020.
 
