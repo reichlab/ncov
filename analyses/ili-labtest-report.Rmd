@@ -1,7 +1,7 @@
 ---
 title: Analysis of excess influenza-like illness during the novel corona virus (2020)
   outbreak
-author: "Nicholas G Reich, Caitlin Rivers"
+author: "Caitlin Rivers, Evan L. Ray, Nicholas G Reich"
 date: "`r Sys.time()` CET"
 output:  
     pdf_document: 
@@ -16,6 +16,7 @@ library(tidyverse)
 library(cdcfluview)
 library(MMWRweek)
 library(gridExtra)
+library(cdcfluutils) # devtools::install_github("reichlab/cdcfluutils")
 
 theme_set(theme_bw())
 ```
@@ -30,13 +31,27 @@ Although no sustained human to human transmission has been observed outside of C
 
 ## Methods
 
-We downloaded publicly available ILINet and WHO-NREVSS data for the national level and HHS Region 10. HHS Region 10 is located in the northwest of the US, where ILI has shown abnormally high levels this season. Region 10 also contains Washington state, where the first case of nCoV was detected in the US.
+#### Data
+
+We downloaded publicly available ILINet and WHO-NREVSS data for the national and regional levels.
 
 From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. These data have been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time. Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
 
-As a first approximation to compute a metric of similarity between the two metrics, we chose to divide the percent positivity from NREVSS by the wILI. The resulting ratio should be smaller when wILI values are high relative to the percent positivity of clinical tests. Therefore, low values of this metric would indicate that there is lower percent positivity than ``expected`` given the current levels of wILI. 
+#### Influenza-like illness not attributable to influenza
+
+One possible measure of influenza illness not attributable to influenza can be calculated as follows:
+
+$$\text{ILI-} = (1 - \text{proportion of tests positive for influenza}) \times \text{wILI}$$
+
+It is important to note that reported wILI can vary substantially due to differences in the types of health care providers reporting into ILINet. Therefore, some increases in reported wILI from one season to another may be driven in part by changes in provider type make up.  An approximate way to adjust for this is by dividing reported wILI by the baseline for a given region and season. Baselines are provided by the CDC.  This results in the following calculation of a \textbf{r}elative ILI-.
+
+$$\text{rILI-} = (1 - \text{proportion of tests positive for influenza}) \times \frac{\text{wILI}}{\text{baseline level for ILI}}$$
+
+
+<!-- As a first approximation to compute a metric of similarity between the two metrics, we chose to divide the percent positivity from NREVSS by the wILI. The resulting ratio should be smaller when wILI values are high relative to the percent positivity of clinical tests. Therefore, low values of this metric would indicate that there is lower percent positivity than ``expected`` given the current levels of wILI. 
 
 We note that a limitation of this metric is that wILI values can be quite small, which could lead to unstable estimates, since this number is in the denominator.
+-->
 
 The code used to produce this report is available on GitHub at https://github.com/reichlab/ncov.
 
@@ -46,104 +61,6 @@ We plot three panels for each region considered (national level and HHS Region 1
 
 Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020.
 
-
-```{r get-nat-data, cache=TRUE}
-## national level
-dat <- ilinet(region = "national")
-
-labdat <- who_nrevss(region = "national")
-
-alldat <- left_join(labdat$clinical_labs, dat)
-
-alldat$season_week <- ifelse(
-    alldat$week <= 30,
-    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
-    alldat$week - 30
-)
-
-alldat$season <- ifelse(
-    alldat$week <= 30,
-    paste0(alldat$year - 1, "/", alldat$year),
-    paste0(alldat$year, "/", alldat$year + 1)
-)
-```
-
-```{r national-plot, fig.cap="\\label{fig:national-plot}National level plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI)."}
-
-# ggplot(alldat, aes(y=percent_positive/weighted_ili, x=week_start)) + 
-#     geom_point() +
-#     scale_x_date(limits=as.Date(c("2015-10-01", Sys.Date())))
-
-p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
-    geom_line() + 
-    ggtitle("National level") + 
-    ylab("wILI") + xlab(NULL) +
-    theme(legend.position = "none")
-p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
-    geom_line()+ 
-    ylab("% positive") + xlab(NULL) +
-    theme(legend.position = "none")
-p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
-    geom_line() + 
-    ylab("% positive/wILI") + xlab(NULL) +
-    theme(legend.position = "bottom") +
-    xlab("season week")
-
-grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
-```
-
-```{r get-reg10-data, cache=TRUE}
-## regional level
-dat <- ilinet(region = "hhs") %>% filter(region=="Region 10")
-
-labdat <- who_nrevss(region = "hhs") 
-
-alldat <- labdat$clinical_labs %>% 
-    filter(region=="Region 10") %>%
-    left_join(dat)
-
-alldat$season_week <- ifelse(
-    alldat$week <= 30,
-    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
-    alldat$week - 30
-)
-
-alldat$season <- ifelse(
-    alldat$week <= 30,
-    paste0(alldat$year - 1, "/", alldat$year),
-    paste0(alldat$year, "/", alldat$year + 1)
-)
-```
-
-```{r region10-plot, fig.cap="\\label{fig:region10-plot}US HHS Region 10 plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI)."}
-p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
-    geom_line() + ggtitle("HHS Region 10") + 
-    ylab("wILI") + xlab(NULL) +
-    theme(legend.position = "none")
-
-p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
-    geom_line() + 
-    ylab("% positive") + xlab(NULL) +
-    theme(legend.position = "none")
-
-p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
-    geom_line() +
-    ylab("% positive/wILI") + xlab(NULL) +
-    theme(legend.position = "bottom") +
-    xlab("season week")
-
-grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
-```
-
-#### Influenza-like illness not attributable to influenza
-
-Another measure of influenza illness not attributable to influenza can be calculated as follows:
-
-$$\text{ILI-} = (\text{proportion of tests positive for influenza}) \times \text{wILI}$$
-
-It is important to note that reported wILI can vary substantially due to differences in the types of health care providers reporting into ILInet: some increases in reported wILI from one season to another may be driven in part by changes in provider type make up.  An approximate way to adjust for this is by dividing reported wILI by the baseline for a given region and season.  This results in the following calculation of a \textbf{r}elative ILI-.
-
-$$\text{rILI-} = (\text{proportion of tests positive for influenza}) \times \frac{\text{wILI}}{\text{baseline level for ILI}}$$
 
 
 ```{r get-all-reg-data, cache=TRUE}
@@ -168,7 +85,7 @@ alldat$season <- ifelse(
 )
 ```
 
-```{r all-region-plot-ILI-, fig.cap="\\label{fig:region10-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom).", fig.height = 9}
+```{r all-region-plot-ILI-, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom).", fig.height = 9}
 p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, x=season_week, color=season)) + 
   geom_line() +
   ylab("(1 - proportion positive) * wILI") + xlab(NULL) +
@@ -201,4 +118,97 @@ p_ilineg2 <- ggplot(alldat2, aes(y=(100 - percent_positive) * (weighted_ili/base
 
 
 grid.arrange(p_ilineg, p_ilineg2, nrow=2)
+```
+
+
+
+ <!--
+ v1 results below this 
+ -->
+```{r get-nat-data, cache=TRUE, eval=FALSE}
+## national level
+dat <- ilinet(region = "national")
+
+labdat <- who_nrevss(region = "national")
+
+alldat <- left_join(labdat$clinical_labs, dat)
+
+alldat$season_week <- ifelse(
+    alldat$week <= 30,
+    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
+    alldat$week - 30
+)
+
+alldat$season <- ifelse(
+    alldat$week <= 30,
+    paste0(alldat$year - 1, "/", alldat$year),
+    paste0(alldat$year, "/", alldat$year + 1)
+)
+```
+
+```{r national-plot, fig.cap="\\label{fig:national-plot}National level plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI).", eval=FALSE}
+
+# ggplot(alldat, aes(y=percent_positive/weighted_ili, x=week_start)) + 
+#     geom_point() +
+#     scale_x_date(limits=as.Date(c("2015-10-01", Sys.Date())))
+
+p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
+    geom_line() + 
+    ggtitle("National level") + 
+    ylab("wILI") + xlab(NULL) +
+    theme(legend.position = "none")
+p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
+    geom_line()+ 
+    ylab("% positive") + xlab(NULL) +
+    theme(legend.position = "none")
+p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
+    geom_line() + 
+    ylab("% positive/wILI") + xlab(NULL) +
+    theme(legend.position = "bottom") +
+    xlab("season week")
+
+grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
+```
+
+```{r get-reg10-data, cache=TRUE, eval=FALSE}
+## regional level
+dat <- ilinet(region = "hhs") %>% filter(region=="Region 10")
+
+labdat <- who_nrevss(region = "hhs") 
+
+alldat <- labdat$clinical_labs %>% 
+    filter(region=="Region 10") %>%
+    left_join(dat)
+
+alldat$season_week <- ifelse(
+    alldat$week <= 30,
+    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
+    alldat$week - 30
+)
+
+alldat$season <- ifelse(
+    alldat$week <= 30,
+    paste0(alldat$year - 1, "/", alldat$year),
+    paste0(alldat$year, "/", alldat$year + 1)
+)
+```
+
+```{r region10-plot, fig.cap="\\label{fig:region10-plot}US HHS Region 10 plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI).", eval=FALSE}
+p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
+    geom_line() + ggtitle("HHS Region 10") + 
+    ylab("wILI") + xlab(NULL) +
+    theme(legend.position = "none")
+
+p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
+    geom_line() + 
+    ylab("% positive") + xlab(NULL) +
+    theme(legend.position = "none")
+
+p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
+    geom_line() +
+    ylab("% positive/wILI") + xlab(NULL) +
+    theme(legend.position = "bottom") +
+    xlab("season week")
+
+grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 ```
