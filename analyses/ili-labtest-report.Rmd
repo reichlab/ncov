@@ -25,7 +25,7 @@ theme_set(theme_bw())
 
 In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening few weeks, case counts have grown substantially. As of this writing, there are over 1200 confirmed cases and at least 41 deaths of what is currently named 2019-nCoV [1]. It is now understood that the virus is likely capable of person to person spread, with a preliminary R0 estimate of 1.2 - 2.5 [2]. 
 
-Although very little sustained human to human transmission has been observed outside of China, the possibility of unrecognized spread in other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that 2019-nCoV were circulating unobserved in the United States, we might expect to see recent changes in the proportion of ILI specimens that test negative for influenza.
+Although very little sustained human to human transmission has been observed outside of China, the possibility of unrecognized spread in other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that 2019-nCoV were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
 
 ## Methods
@@ -213,7 +213,8 @@ p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, colo
 grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 ```
 
-Works Cited
+## Works Cited
 
 [1] http://www.nhc.gov.cn/xcs/yqfkdt/202001/a7cf0437d1324aed9cc1b890b8ee29e6.shtml
+
 [2] https://www.who.int/news-room/detail/23-01-2020-statement-on-t
