@@ -55,12 +55,20 @@ We note that a limitation of this metric is that wILI values can be quite small,
 -->
 
 
-## Results
+## Results \& Discussion
 
-We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 1). We do not observe a strong signal of anomalous patterns of ILI rates that are not due to influenza. In several regions, the fraction of ILI not attributable to influenza is near or above the highest observed rates in previous seasons, although qualitatively it does not appear to be substantially higher than previous years. In recent weeks, there is a trend of a lower fraction of clinical specimens testing negative for influenza relative to wILI, but these changes cannot be described as sustained at this time and are still within historical norms.
+We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 1). 
 
-Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020.
+<!-- swapped out 1/26/2019: We do not observe a strong signal of anomalous patterns of ILI rates that are not due to influenza. In several regions, the fraction of ILI not attributable to influenza is near or above the highest observed rates in previous seasons, although qualitatively it does not appear to be substantially higher than previous years. In recent weeks, there is a trend of a lower fraction of clinical specimens testing negative for influenza relative to wILI, but these changes cannot be described as sustained at this time and are still within historical norms. -->
 
+<!-- swapped out 1/26/2019: Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020. -->
+
+<!-- the below two paragraphs added on 1/26/2019-->
+In the last weeks of 2019 and first weeks of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) are, relative to what has been observed in the past 5 seasons, on the high side, especially in regions 3 and 10. However, rILI- also is not dramatically out of line with what has been observed in seen in previous years. In particular, in the other 8 out of 10 regions, data are being reported (as of Friday, January 24, 2020) at levels similar to or lower than rILI- in 2017/2018.
+
+These results do not particularly rule out any possibilities of 2019-nCoV being present in the US at the time of the most recent data reporting or not.  If 2019-nCoV were present in the US, these data would seem to suggest that its incidence would be currently relatively small, as it would not be adding much relative to levels of rILI- observed in past seasons. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons.
+
+If 2019-nCoV were to cause significant influenza-like illness in subsequent weeks, we might expect the rILI- metric to increase and be larger than previous regions. However, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread 2019-nCoV transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
 
 
 ```{r get-all-reg-data, cache=TRUE}
@@ -88,6 +96,7 @@ alldat$season <- ifelse(
 ```{r all-region-plot-ILI-, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom).", fig.height = 9}
 p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, x=season_week, color=season)) + 
   geom_line() +
+  geom_line(data=filter(alldat, season=="2019/2020"), size=1) +
   ylab("(1 - proportion positive) * wILI") + xlab(NULL) +
   theme(legend.position = "bottom") +
   xlab("season week") +
@@ -110,6 +119,7 @@ alldat2 <- alldat %>%
 
 p_ilineg2 <- ggplot(alldat2, aes(y=(100 - percent_positive) * (weighted_ili/baseline) / 100, x=season_week, color=season)) + 
   geom_line() +
+  geom_line(data=filter(alldat2, season=="2019/2020"), size=1) +
   ylab("(1 - proportion positive) * (wILI/baseline)") + xlab(NULL) +
   theme(legend.position = "bottom") +
   xlab("season week") +
@@ -123,7 +133,7 @@ grid.arrange(p_ilineg, p_ilineg2, nrow=2)
 
 
  <!--
- v1 results below this 
+ v1 results below this set to eval=FALSE
  -->
 ```{r get-nat-data, cache=TRUE, eval=FALSE}
 ## national level
@@ -218,3 +228,9 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 [1] http://www.nhc.gov.cn/xcs/yqfkdt/202001/a7cf0437d1324aed9cc1b890b8ee29e6.shtml
 
 [2] https://www.who.int/news-room/detail/23-01-2020-statement-on-t
+
+## Changelog
+
+26 January 2020: Although our overall assessment has not changed and our analysis has not been updated, we have updated the discussion to better convey the level of uncertainty in our analysis. We also added a heavier line for the 2019/2020 season in the figures.
+
+25 January 2020: First version of report released.
