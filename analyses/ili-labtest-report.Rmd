@@ -68,7 +68,7 @@ In the last weeks of 2019 and first weeks of 2020, the observations of ILI burde
 
 These results do not particularly rule out any possibilities of 2019-nCoV being present in the US at the time of the most recent data reporting or not.  If 2019-nCoV were present in the US, these data would seem to suggest that its incidence would be currently relatively small, as it would not be adding much relative to levels of rILI- observed in past seasons. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons.
 
-If 2019-nCoV were to cause significant influenza-like illness in subsequent weeks, we might expect the rILI- metric to increase and be larger than previous regions. However, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread 2019-nCoV transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
+If 2019-nCoV were to cause significant influenza-like illness in subsequent weeks, we might expect the rILI- metric to increase and be larger than previous seasons. However, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread 2019-nCoV transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
 
 
 ```{r get-all-reg-data, cache=TRUE}
