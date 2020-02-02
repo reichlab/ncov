@@ -23,7 +23,7 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening few weeks, case counts have grown substantially. As of this writing, there are over 1200 confirmed cases and at least 41 deaths of what is currently named 2019-nCoV [1]. It is now understood that the virus is likely capable of person to person spread, with a preliminary R0 estimate of 1.2 - 2.5 [2]. 
+In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening few weeks, case counts have grown substantially. As of this writing, there are 11,953 confirmed cases globally and at least 259 deaths of what is currently named 2019-nCoV [1]. It is now understood that the virus is likely capable of person to person spread, with a preliminary R0 estimate of 1.2 - 2.5 [2]. 
 
 Although very little sustained human to human transmission has been observed outside of China, the possibility of unrecognized spread in other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that 2019-nCoV were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
@@ -225,11 +225,13 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 
 ## Works Cited
 
-[1] http://www.nhc.gov.cn/xcs/yqfkdt/202001/a7cf0437d1324aed9cc1b890b8ee29e6.shtml
+[1] https://www.who.int/docs/default-source/coronaviruse/situation-reports/20200201-sitrep-12-ncov.pdf?sfvrsn=273c5d35_2
 
 [2] https://www.who.int/news-room/detail/23-01-2020-statement-on-t
 
 ## Changelog
+
+2 February 2020: Updated to include new ILINet data released on Friday, Jan 31.
 
 26 January 2020: Although our overall assessment has not changed and our analysis has not been updated, we have updated the discussion to better convey the level of uncertainty in our analysis. We also added a heavier line for the 2019/2020 season in the figures.
 
