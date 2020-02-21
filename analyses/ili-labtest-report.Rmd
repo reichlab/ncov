@@ -23,7 +23,7 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 51,857 laboratory confirmed cases globally and at least 1669 deaths of what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates well above 2 and perhaps as high as 3.7 [2, 3]. 
+In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 76,769 confirmed cases globally and at least 2247 deaths of what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates well above 2 and perhaps as high as 3.7 [2, 3]. 
 
 Although widespread sustained human to human transmission has been observed outside of China, the possibility of unrecognized spread in other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that COVID-19 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
@@ -244,6 +244,8 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 [3] Imai, N., Cori, A., Dorigatti, I., Baguelin, M., Donnelly, C. A., & Riley, S. (n.d.). Report 3: Transmissibility of 2019-nCoV. https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-2019-nCoV-transmissibility.pdf.
 
 ## Changelog
+
+21 February 2020: updated for new ILI data.
 
 16 February 2020: updated to revise name of COVID-19, updated case counts and ILINet data, added citations and revised statements about R0.
 
