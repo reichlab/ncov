@@ -1,6 +1,6 @@
 ---
 title: Looking for evidence of a high burden of COVID-19 in the United States from influenza-like illness data
-author: "Caitlin Rivers, Evan L. Ray, Nicholas G. Reich"
+author: "Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Nicholas G. Reich"
 date: "`r Sys.time()` CET"
 output:  
     pdf_document: 
@@ -113,15 +113,24 @@ p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, 
   ggtitle("(1 - proportion positive) * wILI")
 
 
+region_baselines <- cdcfluutils::flu_onset_baselines 
+
+region_baselines$region <- recode(region_baselines$region,"Region1" = "hhs1",
+                                  "Region2" = "hhs2",
+                                 "Region3" = "hhs3",
+                                 "Region4" = "hhs4",
+                                 "Region5" = "hhs5",
+                                 "Region6" = "hhs6",
+                                 "Region7" = "hhs7",
+                                 "Region8" = "hhs8",
+                                 "Region9" = "hhs9",
+                                 "Region10" = "hhs10",
+                                 "National"="nat")
 alldat2 <- alldat %>%
   mutate(
     region = cdcfluutils::to_standard_location_code(region)
   ) %>%
-  left_join(
-    cdcfluutils::flu_onset_baselines %>%
-      mutate(
-        region = cdcfluutils::to_standard_location_code(region)
-      ),
+  left_join(region_baselines,
     by = c("region", "season")
   )
 
@@ -142,8 +151,86 @@ p_ilineg2 <- ggplot(alldat2, aes(y=(100 - percent_positive) * (weighted_ili/base
 grid.arrange(p_ilineg, p_ilineg2, nrow=2)
 ```
 
+# State Data evaluation
+
+## California
+As of March 1st 2020 there have been documented cases of community spread in California. We apply a similar analysis above to examine the departure of the California ILI level from the state baseline. Here a season specific baseline is computed as the average of the ILI values for epiweek 40-42.  
+
+```{r get-all-california-data}
+## state level
+dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
+california <- dat[dat$region == "California",]
+
+labdat <- who_nrevss(region = "state") 
+labdat <- labdat$clinical_labs
+labdat_ca <- labdat[labdat$region=="California",]
+
+all_data_ca <- california %>% right_join(labdat_ca) 
+
+all_data_ca$season <- ifelse(
+  all_data_ca$week <= 39,
+  paste0(all_data_ca$year - 1, "/", all_data_ca$year),
+  paste0(all_data_ca$year, "/", all_data_ca$year + 1)
+)
+
+all_data_ca$week <- factor(all_data_ca$week ,levels=c(21:52,1:20))
+
+california_baseline <- all_data_ca %>% dplyr::group_by(season) %>% dplyr::summarise(baseline=mean(unweighted_ili[1:2]))
+
+all_data_ca_w_baseline <- all_data_ca %>% left_join(california_baseline)
+  
+all_data_ca_w_baseline$rili <- (100 - as.numeric(as.character(all_data_ca_w_baseline$percent_positive))) * (all_data_ca_w_baseline$unweighted_ili/all_data_ca_w_baseline$baseline) / 100
 
 
+p_ilineg2 <- ggplot(all_data_ca_w_baseline[all_data_ca_w_baseline$week %in% c(40:52,1:20),], aes(y=rili, x=week, color=season,group=season)) + 
+  geom_line()  +
+  geom_line(data=filter(all_data_ca_w_baseline, season %in% c("2019/2020")), size=1) +
+  ylab("(1 - proportion positive) * (uwILI/baseline)") + xlab(NULL) +
+  theme(legend.position = "bottom") +
+  xlab("season week") +
+  ggtitle("(1 - proportion positive) * (uwILI/CA baseline)") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p_ilineg2
+```
+
+## Washington
+
+Similarly in Washington,
+
+```{r get-all-washington-data}
+## state level
+dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
+washington <- dat[dat$region == "Washington",]
+
+labdat <- who_nrevss(region = "state") 
+labdat <- labdat$clinical_labs
+labdat_wa <- labdat[labdat$region=="Washington",]
+
+all_data_wa <- washington %>% right_join(labdat_wa) 
+
+all_data_wa$season <- ifelse(
+  all_data_wa$week <= 39,
+  paste0(all_data_wa$year - 1, "/", all_data_wa$year),
+  paste0(all_data_wa$year, "/", all_data_wa$year + 1)
+)
+
+all_data_wa$week <- factor(all_data_wa$week ,levels=c(21:52,1:20))
+
+washington_baseline <- all_data_wa %>% dplyr::group_by(season) %>% dplyr::summarise(baseline=mean(unweighted_ili[1:2]))
+
+all_data_wa_w_baseline <- all_data_wa %>% left_join(washington_baseline)
+  
+all_data_wa_w_baseline$rili <- (100 - as.numeric(as.character(all_data_wa_w_baseline$percent_positive))) * (all_data_wa_w_baseline$unweighted_ili/all_data_wa_w_baseline$baseline) / 100
+
+
+p_ilineg2 <- ggplot(all_data_wa_w_baseline[all_data_wa_w_baseline$week %in% c(40:52,1:20),], aes(y=rili, x=week, color=season,group=season)) + 
+  geom_line()  +
+  geom_line(data=filter(all_data_wa_w_baseline, season %in% c("2019/2020")), size=1) +
+  ylab("(1 - proportion positive) * (uwILI/WA baseline)") + xlab(NULL) +
+  theme(legend.position = "bottom") +
+  xlab("season week") +
+  ggtitle("(1 - proportion positive) * (uwILI/WA baseline)") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p_ilineg2
+```
  <!--
  v1 results below this set to eval=FALSE
  -->
@@ -235,6 +322,7 @@ p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, colo
 grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 ```
 
+
 ## Works Cited
 
 [1] https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports/
@@ -256,3 +344,5 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 26 January 2020: Although our overall assessment has not changed and our analysis has not been updated, we have updated the discussion to better convey the level of uncertainty in our analysis. We also added a heavier line for the 2019/2020 season in the figures.
 
 25 January 2020: First version of report released.
+
+1 March 2020: Added California analysis. 
