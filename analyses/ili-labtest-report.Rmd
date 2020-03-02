@@ -113,24 +113,13 @@ p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, 
   ggtitle("(1 - proportion positive) * wILI")
 
 
-region_baselines <- cdcfluutils::flu_onset_baselines 
 
-region_baselines$region <- recode(region_baselines$region,"Region1" = "hhs1",
-                                  "Region2" = "hhs2",
-                                 "Region3" = "hhs3",
-                                 "Region4" = "hhs4",
-                                 "Region5" = "hhs5",
-                                 "Region6" = "hhs6",
-                                 "Region7" = "hhs7",
-                                 "Region8" = "hhs8",
-                                 "Region9" = "hhs9",
-                                 "Region10" = "hhs10",
-                                 "National"="nat")
+
 alldat2 <- alldat %>%
   mutate(
     region = cdcfluutils::to_standard_location_code(region)
-  ) %>%
-  left_join(region_baselines,
+  ) %>% left_join(cdcfluutils::flu_onset_baselines %>% mutate(
+    region = cdcfluutils::to_standard_location_code(region)) ,
     by = c("region", "season")
   )
 
