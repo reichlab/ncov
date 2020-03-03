@@ -1,6 +1,3 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
-\PassOptionsToPackage{hyphens}{url}
-%
 \documentclass[]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
@@ -9,32 +6,29 @@
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provides euro and other symbols
 \else % if luatex or xelatex
-  \usepackage{unicode-math}
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
 \IfFileExists{microtype.sty}{%
-\usepackage[]{microtype}
+\usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
+\usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
-\hypersetup{
+\hypersetup{unicode=true,
             pdftitle={Looking for evidence of a high burden of COVID-19 in the United States from influenza-like illness data},
-            pdfauthor={Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Nicholas G. Reich},
+            pdfauthor={Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Estee Cramer, Nicholas G. Reich},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
-\usepackage[margin=1in]{geometry}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -44,6 +38,12 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
@@ -58,16 +58,34 @@
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
-% set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
 
+%%% Change title format to be more compact
+\usepackage{titling}
 
-\title{Looking for evidence of a high burden of COVID-19 in the United States
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Looking for evidence of a high burden of COVID-19 in the United States
 from influenza-like illness data}
-\author{Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Nicholas G. Reich}
-\date{2020-03-02 10:57:21 CET}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Estee Cramer, Nicholas G.
+Reich}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{2020-03-03 12:11:46 CET}
+
 
 \begin{document}
 \maketitle
@@ -100,8 +118,15 @@ compared to the same time in past seasons.
 \hypertarget{data}{%
 \paragraph{Data}\label{data}}
 
-We downloaded publicly available ILINet and WHO-NREVSS data for the
-national and regional levels.
+We downloaded publicly available ILINet and WHO-NREVSS data for US
+Health and Human Services (HHS) regions (Figure 1) and states.
+
+\begin{figure}
+\centering
+\includegraphics{ili-labtest-report_files/figure-latex/hhs-regions-map-1.pdf}
+\caption{\label{fig:hhs-regions-map}US HHS Regions are made up of groups
+of states.}
+\end{figure}
 
 From the ILINet dataset, we downloaded weighted influenza-like illness
 (wILI), which measures the percentage of doctor's office visits at
@@ -141,8 +166,11 @@ ILI-.
 \hypertarget{results-discussion}{%
 \subsection{Results \& Discussion}\label{results-discussion}}
 
+\hypertarget{regional-level-analyses}{%
+\subsubsection{Regional-level analyses}\label{regional-level-analyses}}
+
 We plotted ILI- and rILI- as a function of the week within each flu
-season and stratified by region (Figure 1).
+season and stratified by region (Figure 2).
 
 In the last weeks of 2019 and first weeks of 2020, the observations of
 ILI burden due to non-influenza pathogens (rILI-) are, relative to what
@@ -175,11 +203,11 @@ the rILI- metric.
 values since the 2015/2016 season (top), and rILI- values (bottom).}
 \end{figure}
 
-\hypertarget{state-data-evaluation}{%
-\section{State Data evaluation}\label{state-data-evaluation}}
+\hypertarget{state-level-analyses}{%
+\subsubsection{State-level analyses}\label{state-level-analyses}}
 
 \hypertarget{california}{%
-\subsection{California}\label{california}}
+\paragraph{California}\label{california}}
 
 As of March 1st 2020 there have been documented cases of community
 spread in California. We apply a similar analysis above to examine the
@@ -190,7 +218,7 @@ for epiweek 40-42.
 \includegraphics{ili-labtest-report_files/figure-latex/get-all-california-data-1.pdf}
 
 \hypertarget{washington}{%
-\subsection{Washington}\label{washington}}
+\paragraph{Washington}\label{washington}}
 
 Similarly in Washington,
 
@@ -233,5 +261,6 @@ line for the 2019/2020 season in the figures.
 25 January 2020: First version of report released.
 
 1 March 2020: Added California analysis.
+
 
 \end{document}

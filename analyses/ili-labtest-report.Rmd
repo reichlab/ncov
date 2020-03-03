@@ -1,6 +1,6 @@
 ---
 title: Looking for evidence of a high burden of COVID-19 in the United States from influenza-like illness data
-author: "Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Nicholas G. Reich"
+author: "Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Estee Cramer, Nicholas G. Reich"
 date: "`r Sys.time()` CET"
 output:  
     pdf_document: 
@@ -13,12 +13,16 @@ knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
 
 library(tidyverse)
 library(cdcfluview)
+library(ggthemes)
+library(maps)
 library(MMWRweek)
 library(gridExtra)
 library(cdcfluutils) # devtools::install_github("reichlab/cdcfluutils")
 
 theme_set(theme_bw())
 ```
+
+
 
 
 ## Introduction 
@@ -32,7 +36,47 @@ Sustained human-to-human transmission has begun to be observed outside of China,
 
 #### Data
 
-We downloaded publicly available ILINet and WHO-NREVSS data for the national and regional levels.
+We downloaded publicly available ILINet and WHO-NREVSS data for US Health and Human Services (HHS) regions (Figure 1) and states.
+
+```{r hhs-regions-map, cache=TRUE, , fig.cap="\\label{fig:hhs-regions-map}US HHS Regions are made up of groups of states.", fig.height = 3}
+us_states <- map_data("state")
+
+us_states_update <- us_states %>%
+    mutate(hhs_region = case_when(
+        region %in% c("connecticut", "maine", "massachusetts", "new hampshire", "rhode island", "vermont") ~ "hhs1", 
+        region %in% c("new jersey", "new york") ~ "hhs2", 
+        region %in% c("delaware", "district of columbia", "maryland", "pennsylvania", "virginia", "west virginia") ~ "hhs3", 
+        region %in% c("alabama", "florida", "georgia", "kentucky", "mississippi", "north carolina", "south carolina", "tennessee") ~ "hhs4", 
+        region %in% c("illinois", "indiana","michigan", "minnesota", "ohio", "wisconsin") ~ "hhs5",
+        region %in% c("arkansas", "louisiana", "new mexico", "oklahoma", "texas") ~ "hhs6", 
+        region %in% c("iowa", "kansas","missouri", "nebraska") ~ "hhs7", 
+        region %in% c("colorado", "montana", "north dakota","south dakota", "utah", "wyoming") ~ "hhs8", 
+        region %in% c("arizona","california", "hawaii", "nevada") ~ "hhs9",
+        region %in% c("seattle", "alaska", "idaho", "oregon", "washington") ~ "hhs10")) %>%
+    mutate(hhs_region = as.factor(hhs_region)) 
+
+CDCcolors <- c("#5B7781", "#DA9D9C","#653C17", "#B2741B",  "#DCD744",   "#689A61",  "#E38F45",  "#518FAB",  "#A59070",  "#A0CCDC")
+
+hhs_region_plot <- ggplot(us_states_update, mapping = aes(x = long, y = lat, group = group, fill = hhs_region)) + geom_polygon(color = "gray90", size = .1) +
+    guides(fill = FALSE) +
+    annotate(geom="text", x=-70, y= 45, label="1", color="white", size = 9) +
+    annotate(geom="text", x=-74.5, y= 43, label="2", color="white", size = 9) +
+    annotate(geom="text", x=-78, y= 40.5, label="3", color="white", size = 9) +
+    annotate(geom="text", x=-85, y= 34, label="4", color="white", size = 9) + 
+    annotate(geom="text", x=-88, y= 40.5, label="5", color="white", size = 9) + 
+    annotate(geom="text", x=-98, y= 32.8, label="6", color="white", size = 9) +
+    annotate(geom="text", x=-97.5, y= 40, label="7", color="white", size = 9) + 
+    annotate(geom="text", x=-105, y= 46, label="8", color="white", size = 9) + 
+    annotate(geom="text", x=-117.5, y= 39.5, label="9", color="white", size = 9) + 
+    annotate(geom="text", x=-120, y= 45, label="10", color="white", size = 9) +
+    scale_fill_manual(values=CDCcolors) +
+    ggtitle("US Health and Human Services Regions") +
+    theme_map()+
+    coord_fixed(ratio = 1.4:1)
+
+hhs_region_plot
+```
+
 
 From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. These data have been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time. Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
 
@@ -57,7 +101,8 @@ We note that a limitation of this metric is that wILI values can be quite small,
 
 ## Results \& Discussion
 
-We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 1). 
+### Regional-level analyses
+We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 2). 
 
 <!-- swapped out 1/26/2019: We do not observe a strong signal of anomalous patterns of ILI rates that are not due to influenza. In several regions, the fraction of ILI not attributable to influenza is near or above the highest observed rates in previous seasons, although qualitatively it does not appear to be substantially higher than previous years. In recent weeks, there is a trend of a lower fraction of clinical specimens testing negative for influenza relative to wILI, but these changes cannot be described as sustained at this time and are still within historical norms. -->
 
@@ -102,7 +147,18 @@ alldat$regionnew <- factor(alldat$region, levels=paste0("hhs", 1:10), ordered=TR
 
 ```
 
-```{r all-region-plot-ILI, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom).", fig.height = 9}
+```{r calc-current-season-week}
+this_week <- MMWRweek(Sys.Date())$MMWRweek
+this_year <- MMWRweek(Sys.Date())$MMWRyear
+this_season_week <- ifelse(
+  this_week <= 30,
+  this_week + MMWRweek(MMWRweek:::start_date(this_year) - 1)$MMWRweek - 30,
+  this_week - 30
+)
+```
+
+
+```{r all-region-plot-ILI, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom). Dashed line shows the 'season week' during which this plot was generated. The small gap between the current season's data and the line indicates the lag in ILI reporting, typically one week.", fig.height = 4.5}
 p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, x=season_week, color=season)) + 
   geom_line() +
   geom_line(data=filter(alldat, season=="2019/2020"), size=1) +
@@ -116,10 +172,8 @@ p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, 
 
 
 alldat2 <- alldat %>%
-  mutate(
-    region = cdcfluutils::to_standard_location_code(region)
-  ) %>% left_join(cdcfluutils::flu_onset_baselines %>% mutate(
-    region = cdcfluutils::to_standard_location_code(region)) ,
+  mutate(region = cdcfluutils::to_standard_location_code(region)) %>% left_join(cdcfluutils::flu_onset_baselines %>% 
+      mutate(region = cdcfluutils::to_standard_location_code(region)),
     by = c("region", "season")
   )
 
@@ -131,18 +185,22 @@ p_ilineg2 <- ggplot(alldat2, aes(y=(100 - percent_positive) * (weighted_ili/base
   geom_line(data=filter(alldat2, season=="2019/2020"), size=1) +
   ylab("(1 - proportion positive) * (wILI/baseline)") + xlab(NULL) +
   theme(legend.position = "bottom") +
+  geom_vline(aes(xintercept=this_season_week), linetype="dashed", color="grey") +
   xlab("season week") +
   facet_wrap( ~ regionnew, ncol = 5) +
-  ggtitle("(1 - proportion positive) * (wILI/regional baseline)")
+  ggtitle("Proportion of ILI not due to influenza, by HHS region")
 
-
-
-grid.arrange(p_ilineg, p_ilineg2, nrow=2)
+p_ilineg2
 ```
 
-# State Data evaluation
+```{r std-dev-analysis}
 
-## California
+```
+
+
+### State-level analyses
+
+#### California
 As of March 1st 2020 there have been documented cases of community spread in California. We apply a similar analysis above to examine the departure of the California ILI level from the state baseline. Here a season specific baseline is computed as the average of the ILI values for epiweek 40-42.  
 
 ```{r get-all-california-data}
@@ -181,7 +239,7 @@ p_ilineg2 <- ggplot(all_data_ca_w_baseline[all_data_ca_w_baseline$week %in% c(40
 p_ilineg2
 ```
 
-## Washington
+#### Washington
 
 Similarly in Washington,
 
