@@ -31,6 +31,7 @@ In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in 
 
 Sustained human-to-human transmission has begun to be observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that COVID-19 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
+Limited work has been done on harnessing US influenza survelliance systems for non-influenza respiratroy pathogens. However, a number of studies of the sensitivity of foreign influenza detection systems to non-influenza pathogens have found that ILI survelliance captures non-influenza disease presence [4,5,6,7,8,9]. For instance, Chieh-Yu, et al found a stastically significant reduction in reported ILI in Taiwan due to the SARS epidemic of 2003. This suggests that ILI monitoring in the U.S. may be able to capture non-influenza illnesses such as COVID-19.  
 
 ## Methods
 
@@ -378,6 +379,17 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 
 [3] Imai, N., Cori, A., Dorigatti, I., Baguelin, M., Donnelly, C. A., & Riley, S. (n.d.). Report 3: Transmissibility of 2019-nCoV. https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-2019-nCoV-transmissibility.pdf.
 
+[4] Jain, Amita, Shantanu Prakash, and Bhawana Jain. "Contribution of non-influenza respiratory viruses in causation of Influenza like Illness (ILI) during influenza epidemic: A laboratory based study." Clinical Epidemiology and Global Health 5.4 (2017): 173-175.
+
+[5] Schnepf, Nathalie, et al. "High burden of non-influenza viruses in influenza-like illness in the early weeks of H1N1v epidemic in France." PloS one 6.8 (2011).
+
+[6] Al-Tawfiq, Jaffar A., et al. "Surveillance for emerging respiratory viruses." The Lancet Infectious Diseases 14.10 (2014): 992-1000.
+
+[7] Choi, Sang-Ho. "Beyond the Routine Influenza Surveillance." Infection & chemotherapy 48.4 (2016): 344-346.
+
+[8] Kang, Seong Hui, et al. "Analysis of risk factors for severe acute respiratory infection and pneumonia and among adult patients with acute respiratory illness during 2011-2014 influenza seasons in Korea." Infection & chemotherapy 48.4 (2016): 294-301.
+
+[9] Liu, Chieh-Yu, et al. "Impacts of influenza vaccination policy for the elderly and the SARS epidemic on influenza-like illness in Taiwan." Journal of Statistics and Management Systems 12.3 (2009): 531-542.
 ## Changelog
 
 29 February 2020: updated for new ILI data. Minor rephrasing in intro.
@@ -392,4 +404,6 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 
 25 January 2020: First version of report released.
 
-1 March 2020: Added California analysis. 
+1 March 2020: Added California analysis.
+
+2 March 2020: Added Washington analysis and initial literature review. 
