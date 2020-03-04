@@ -98,6 +98,11 @@ $$\text{rILI-} = (1 - \text{proportion of tests positive for influenza}) \times 
 We note that a limitation of this metric is that wILI values can be quite small, which could lead to unstable estimates, since this number is in the denominator.
 -->
 
+#### Measuring anomalies in ILI- during a season
+
+We developed a metric to measure the degree to which a given ILI- observation is significantly higher or lower than expectation, based on past trends at similar times of the year.
+For each region and season-week, we averaged observations from the past four seasons (2015/2016 through 2018/2019) for the given season week and one season week on either side
+
 
 ## Results \& Discussion
 
@@ -144,7 +149,6 @@ alldat <- alldat %>%
   
 alldat$regionnew <- factor(alldat$region, levels=paste0("hhs", 1:10), ordered=TRUE)
 
-
 ```
 
 ```{r calc-current-season-week}
@@ -155,10 +159,18 @@ this_season_week <- ifelse(
   this_week + MMWRweek(MMWRweek:::start_date(this_year) - 1)$MMWRweek - 30,
   this_week - 30
 )
+
+
+label_df <- alldat %>% filter(season=="2018/2019", region=="hhs1") %>% 
+  select(season, week, year, season_week) %>%
+  mutate(season_week_date=MMWRweek2Date(MMWRweek = week, MMWRyear=year+1)) %>%
+  select(season_week, season_week_date) %>%
+  filter(season_week %in% seq(10, 50, by=10)) %>%
+  mutate(season_week_label = format(season_week_date, "%b-%d"))
 ```
 
 
-```{r all-region-plot-ILI, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom). Dashed line shows the 'season week' during which this plot was generated. The small gap between the current season's data and the line indicates the lag in ILI reporting, typically one week.", fig.height = 4.5}
+```{r all-region-plot-ILI, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom). The dates on the x-axis correspond to the dates for the 2019/2020 season, with previous seasons lined up approximately the same time by week. The vertical dashed line shows the date at which this plot was generated. The small gap between the current season's data and the line indicates the lag in ILI reporting, typically one week.", fig.height = 4.5}
 p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, x=season_week, color=season)) + 
   geom_line() +
   geom_line(data=filter(alldat, season=="2019/2020"), size=1) +
@@ -169,31 +181,79 @@ p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, 
   ggtitle("(1 - proportion positive) * wILI")
 
 
-
-
 alldat2 <- alldat %>%
-  mutate(region = cdcfluutils::to_standard_location_code(region)) %>% left_join(cdcfluutils::flu_onset_baselines %>% 
+  mutate(region = cdcfluutils::to_standard_location_code(region)) %>% 
+  left_join(cdcfluutils::flu_onset_baselines %>% 
       mutate(region = cdcfluutils::to_standard_location_code(region)),
     by = c("region", "season")
-  )
+  ) %>%
+  left_join(label_df, by=c("season_week"))
 
 alldat2$regionnew <- factor(alldat2$region, levels=paste0("hhs", 1:10), ordered=TRUE)
 
+alldat2$rili_minus <- (100 - alldat2$percent_positive) * (alldat2$weighted_ili/alldat2$baseline) / 100
 
-p_ilineg2 <- ggplot(alldat2, aes(y=(100 - percent_positive) * (weighted_ili/baseline) / 100, x=season_week, color=season)) + 
+
+p_ilineg2 <- ggplot(alldat2, aes(y=rili_minus, x=season_week, color=season)) + 
   geom_line() +
   geom_line(data=filter(alldat2, season=="2019/2020"), size=1) +
   ylab("(1 - proportion positive) * (wILI/baseline)") + xlab(NULL) +
   theme(legend.position = "bottom") +
   geom_vline(aes(xintercept=this_season_week), linetype="dashed", color="grey") +
-  xlab("season week") +
+  xlab(NULL) +
   facet_wrap( ~ regionnew, ncol = 5) +
+  scale_x_continuous(breaks = label_df$season_week, labels=label_df$season_week_label) +
   ggtitle("Proportion of ILI not due to influenza, by HHS region")
 
 p_ilineg2
 ```
 
-```{r std-dev-analysis}
+```{r std-dev-analysis, fig.height=3, fig.cap="Figure showing Z scores by week for each region."}
+## calculate region-and-season-week specific means and sds using only previous years
+region_means_and_sds <- alldat2 %>%
+  group_by(region) %>%
+  mutate(
+    rili_minus_lag1 = lag(rili_minus), 
+    rili_minus_lead1 = lead(rili_minus)
+  ) %>%
+  ungroup() %>%
+  filter(season != "2019/2020") %>%
+  group_by(region, season_week) %>%
+  summarize(
+    avg_rili_minus1 = mean(rili_minus), 
+    sd_rili_minus1 = sd(rili_minus),
+    max_rili_minus = max(rili_minus),
+    avg_rili_minus = mean(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE), 
+    sd_rili_minus = sd(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE))
+
+## merge with region data and calculate z-scores for each week
+region_data <- alldat2 %>%
+  left_join(region_means_and_sds, by=c("region", "season_week")) %>%
+  mutate(
+    z_score = (rili_minus-avg_rili_minus)/sd_rili_minus,
+    z_score_bin = cut(z_score, breaks = c(-Inf, seq(-3, 3, by=1), Inf), ordered_result = TRUE),
+    rili_minus_is_max = rili_minus >= max_rili_minus
+    )
+
+region_data$z_score_bin <- factor(region_data$z_score_bin, levels=rev(levels(region_data$z_score_bin)))
+
+## plot
+# ggplot(filter(region_data, season=="2019/2020")) +
+#   geom_raster(aes(x=wk_date, y=region, fill=z_score)) +
+#   scale_fill_gradient2(low=scales::muted("blue"), high=scales::muted("red"))
+
+# maybe nicer solution to borders here 
+#  https://stackoverflow.com/questions/13258454/marking-specific-tiles-in-geom-tile-geom-raster
+
+ggplot(filter(region_data, season=="2019/2020")) +
+  geom_tile(aes(x=wk_date, y=regionnew, fill=z_score_bin, color=rili_minus_is_max), size=1, width=6.5, height=0.9) +
+  scale_fill_brewer(palette="RdYlBu", drop=FALSE, name="Z score") +
+  scale_color_manual(values = c(NA, "black"), labels=NULL) +
+  xlab(NULL) + ylab(NULL) +
+  ggtitle("Z score of rILI- for each week in 2019/2020 season") +
+  guides(color=FALSE) +
+  scale_x_date(expand=c(0.01,0.01), limits=c(as.Date("2019-09-25"), as.Date("2020-05-01")), date_breaks = "1 month", date_labels = "%b")
+  
 
 ```
 
@@ -380,6 +440,8 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 
 ## Changelog
 
+2 March 2020: Added state-level analysis, HHS region map, z-score code and figure. 
+
 29 February 2020: updated for new ILI data. Minor rephrasing in intro.
 
 21 February 2020: updated for new ILI data.
@@ -392,4 +454,3 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 
 25 January 2020: First version of report released.
 
-1 March 2020: Added California analysis. 
