@@ -1,2 +1,2 @@
-# ncov
-analyses related to nCoV-2020 outbreak
+# COVID-19
+analyses related to COVID-19 outbreak
