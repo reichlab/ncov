@@ -27,9 +27,9 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 83,652 confirmed cases globally and at least 2,858 deaths of what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3]. 
+In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 95,333 confirmed cases globally and at least 3,282 deaths of what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3]. 
 
-Sustained human-to-human transmission has begun to be observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. As an early effort to explore this scenario in the United States, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that COVID-19 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
+Sustained human-to-human transmission has been observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. The same analyses suggest that some transmission chains may have been progressing, undetected, in the Pacific northwest of the United States since mid-January.[4]  As an early effort to explore the scenario of undetected spread in the United States, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that COVID-19 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
 
 ## Methods
@@ -59,16 +59,16 @@ CDCcolors <- c("#5B7781", "#DA9D9C","#653C17", "#B2741B",  "#DCD744",   "#689A61
 
 hhs_region_plot <- ggplot(us_states_update, mapping = aes(x = long, y = lat, group = group, fill = hhs_region)) + geom_polygon(color = "gray90", size = .1) +
     guides(fill = FALSE) +
-    annotate(geom="text", x=-70, y= 45, label="1", color="white", size = 9) +
-    annotate(geom="text", x=-74.5, y= 43, label="2", color="white", size = 9) +
-    annotate(geom="text", x=-78, y= 40.5, label="3", color="white", size = 9) +
-    annotate(geom="text", x=-85, y= 34, label="4", color="white", size = 9) + 
-    annotate(geom="text", x=-88, y= 40.5, label="5", color="white", size = 9) + 
-    annotate(geom="text", x=-98, y= 32.8, label="6", color="white", size = 9) +
-    annotate(geom="text", x=-97.5, y= 40, label="7", color="white", size = 9) + 
-    annotate(geom="text", x=-105, y= 46, label="8", color="white", size = 9) + 
-    annotate(geom="text", x=-117.5, y= 39.5, label="9", color="white", size = 9) + 
-    annotate(geom="text", x=-120, y= 45, label="10", color="white", size = 9) +
+    annotate(geom="text", x=-70, y= 45, label="1", color="white", size = 7) +
+    annotate(geom="text", x=-74.5, y= 43, label="2", color="white", size = 7) +
+    annotate(geom="text", x=-78, y= 40.5, label="3", color="white", size = 7) +
+    annotate(geom="text", x=-85, y= 34, label="4", color="white", size = 7) + 
+    annotate(geom="text", x=-88, y= 40.5, label="5", color="white", size = 7) + 
+    annotate(geom="text", x=-98, y= 32.8, label="6", color="white", size = 7) +
+    annotate(geom="text", x=-97.5, y= 40, label="7", color="white", size = 7) + 
+    annotate(geom="text", x=-105, y= 46, label="8", color="white", size = 7) + 
+    annotate(geom="text", x=-117.5, y= 39.5, label="9", color="white", size = 7) + 
+    annotate(geom="text", x=-120, y= 45, label="10", color="white", size = 7) +
     scale_fill_manual(values=CDCcolors) +
     ggtitle("US Health and Human Services Regions") +
     theme_map()+
@@ -78,7 +78,7 @@ hhs_region_plot
 ```
 
 
-From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. These data have been aggregated into a single reporting system since the 2015/2016 season, so we use data since that time. Both data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
+From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. We used 23 seasons of data for HHS regions, beginning with the 1997/1998 season, and 10 seasons of data for states, beginning with the 2010/2011 season. All data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
 
 The code used to produce this report is available on GitHub at https://github.com/reichlab/ncov.
 
@@ -88,7 +88,7 @@ One possible measure of influenza illness not attributable to influenza (ILI-) c
 
 $$\text{ILI-} = (1 - \text{proportion of tests positive for influenza}) \times \text{wILI}$$
 
-It is important to note that reported wILI can vary substantially due to differences in the types of health care providers reporting into ILINet. Therefore, some increases in reported wILI from one season to another may be driven in part by changes in provider type make up. An approximate way to adjust for this is by dividing reported wILI by the baseline for a given region and season. Baselines are provided by the CDC. This results in the following calculation of a \textbf{r}elative ILI-.
+It is important to note that reported wILI can vary substantially due to differences in the types of health care providers reporting into ILINet. Therefore, some increases in reported wILI from one season to another may be driven in part by changes in provider type make up. An approximate way to adjust for this is by dividing reported wILI by the baseline for a given region and season. Baselines for HHS regions are provided by the CDC. Baselines for states are calculated as the average of the first two weekly ILI observations for a given season, thinking that this adjusts for any systematic adjustments to the provider mix in each season. These baselines enable the following calculation of a \textbf{r}elative ILI-.
 
 $$\text{rILI-} = (1 - \text{proportion of tests positive for influenza}) \times \frac{\text{wILI}}{\text{baseline level for ILI}}$$
 
@@ -101,22 +101,23 @@ We note that a limitation of this metric is that wILI values can be quite small,
 #### Measuring anomalies in ILI- during a season
 
 We developed a metric to measure the degree to which a given ILI- observation is significantly higher or lower than expectation, based on past trends at similar times of the year.
-For each region and season-week, we averaged observations from the past four seasons (2015/2016 through 2018/2019) for the given season week and one season week on either side
+For each region and season-week, we averaged observations from the past seasons (22 seasons for regions, 9 for states) for the given season week and one season week on either side and calculated the standard deviation based on these same observations. We then computed "z-scores" as the number of standard deviations above or below the average a particular rILI- observation is:
+$$\text{Z} =  \frac{\text{rILI-} - \overline{\text{rILI-}}}{sd{\text{rILI-}}}$$
 
 
 ## Results \& Discussion
 
 ### Regional-level analyses
-We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 2). 
+We plotted ILI- and rILI- as a function of the week within each flu season and stratified by region (Figure 2). Additionally, we plotted the 2019/2020 Z-scores for all regions as a function of week of season (Figure 3).
 
 <!-- swapped out 1/26/2019: We do not observe a strong signal of anomalous patterns of ILI rates that are not due to influenza. In several regions, the fraction of ILI not attributable to influenza is near or above the highest observed rates in previous seasons, although qualitatively it does not appear to be substantially higher than previous years. In recent weeks, there is a trend of a lower fraction of clinical specimens testing negative for influenza relative to wILI, but these changes cannot be described as sustained at this time and are still within historical norms. -->
 
 <!-- swapped out 1/26/2019: Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020. -->
 
 <!-- the below two paragraphs added on 1/26/2020, revised on 2/16/2020-->
-In the last weeks of 2019 and first weeks of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) are, relative to what has been observed in the past 5 seasons, on the high side. However, rILI- also is not dramatically out of line with what has been observed in seen in previous years.
+In the last weeks of 2019 and first weeks of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) have been, relative to what has been observed in the past 22 seasons, above the seasonal average. However, the measures of rILI- also have not been consistently more than 3 standard deviations above the average (Figure 3).
 
-These results do not particularly rule out any possibilities of COVID-19 transmission occuring in the US at the time of the most recent data reporting or not.  If COVID-19 were present in the US, these data would seem to suggest that its incidence would be currently relatively small, as it would not be adding much relative to levels of rILI- observed in past seasons. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons.
+These results do not particularly rule out any possibilities of COVID-19 transmission occuring in the US at the time of the most recent data reporting or not.  If COVID-19 were circulating widely in the US, these data would seem to suggest that its incidence would be currently relatively small, as it would not be adding much relative to levels of rILI- observed in past seasons. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons.
 
 If COVID-19 were to cause significant influenza-like illness in subsequent weeks, we might expect the rILI- metric to increase and be larger than previous seasons. However, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread COVID-19 transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
 
@@ -128,6 +129,7 @@ dat <- ilinet(region = "hhs")# %>% filter(region=="Region 10")
 labdat <- who_nrevss(region = "hhs") 
 
 alldat <- labdat$clinical_labs %>% 
+  bind_rows(labdat$combined_prior_to_2015_16) %>%
   left_join(dat)
 
 alldat$season_week <- ifelse(
@@ -170,7 +172,7 @@ label_df <- alldat %>% filter(season=="2018/2019", region=="hhs1") %>%
 ```
 
 
-```{r all-region-plot-ILI, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing ILI- values since the 2015/2016 season (top), and rILI- values (bottom). The dates on the x-axis correspond to the dates for the 2019/2020 season, with previous seasons lined up approximately the same time by week. The vertical dashed line shows the date at which this plot was generated. The small gap between the current season's data and the line indicates the lag in ILI reporting, typically one week.", fig.height = 4.5}
+```{r all-region-plot-ILI, fig.cap="\\label{fig:all-region-plot}US HHS Regions plots showing rILI- values since the 1997/1998 season (grey lines) and the 2019/2020 season (dark black line). The line highlighted in red is the 2009/2010 H1N1 pandemic season. The dates on the x-axis correspond to the dates for the 2019/2020 season, with previous seasons lined up approximately the same time by week. The vertical dashed line shows the date at which this plot was generated. The small gap between the current season's data and the line indicates the lag in ILI reporting, typically one week.", fig.height = 4.5}
 p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, x=season_week, color=season)) + 
   geom_line() +
   geom_line(data=filter(alldat, season=="2019/2020"), size=1) +
@@ -194,21 +196,23 @@ alldat2$regionnew <- factor(alldat2$region, levels=paste0("hhs", 1:10), ordered=
 alldat2$rili_minus <- (100 - alldat2$percent_positive) * (alldat2$weighted_ili/alldat2$baseline) / 100
 
 
-p_ilineg2 <- ggplot(alldat2, aes(y=rili_minus, x=season_week, color=season)) + 
-  geom_line() +
-  geom_line(data=filter(alldat2, season=="2019/2020"), size=1) +
+p_ilineg2 <- ggplot(alldat2, aes(y=rili_minus, x=season_week, group=season)) + 
+  geom_line(color="grey", alpha=.4) +
+  geom_line(data=filter(alldat2, season=="2009/2010"), size=1, color="red", alpha=.5) +
+  geom_line(data=filter(alldat2, season=="2019/2020"), size=1, color="black") +
   ylab("(1 - proportion positive) * (wILI/baseline)") + xlab(NULL) +
   theme(legend.position = "bottom") +
   geom_vline(aes(xintercept=this_season_week), linetype="dashed", color="grey") +
   xlab(NULL) +
   facet_wrap( ~ regionnew, ncol = 5) +
   scale_x_continuous(breaks = label_df$season_week, labels=label_df$season_week_label) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   ggtitle("Proportion of ILI not due to influenza, by HHS region")
 
 p_ilineg2
 ```
 
-```{r std-dev-analysis, fig.height=3, fig.cap="Figure showing Z scores by week for each region."}
+```{r std-dev-analysis, fig.height=3, fig.cap="Figure showing Z scores by week for each HHS region. Tiles with a dark black outline indicate locations where the observed rILI- was higher in that week of the season than had ever been observed in the last 22 seasons."}
 ## calculate region-and-season-week specific means and sds using only previous years
 region_means_and_sds <- alldat2 %>%
   group_by(region) %>%
@@ -246,7 +250,7 @@ region_data$z_score_bin <- factor(region_data$z_score_bin, levels=rev(levels(reg
 #  https://stackoverflow.com/questions/13258454/marking-specific-tiles-in-geom-tile-geom-raster
 
 ggplot(filter(region_data, season=="2019/2020")) +
-  geom_tile(aes(x=wk_date, y=regionnew, fill=z_score_bin, color=rili_minus_is_max), size=1, width=6.5, height=0.9) +
+  geom_tile(aes(x=wk_date, y=regionnew, fill=z_score_bin, color=rili_minus_is_max), size=.5, width=6.5, height=0.9) +
   scale_fill_brewer(palette="RdYlBu", drop=FALSE, name="Z score") +
   scale_color_manual(values = c(NA, "black"), labels=NULL) +
   xlab(NULL) + ylab(NULL) +
@@ -260,173 +264,116 @@ ggplot(filter(region_data, season=="2019/2020")) +
 
 ### State-level analyses
 
-#### California
-As of March 1st 2020 there have been documented cases of community spread in California. We apply a similar analysis above to examine the departure of the California ILI level from the state baseline. Here a season specific baseline is computed as the average of the ILI values for epiweek 40-42.  
+The z-score calculations show a few states with systematically higher than average observations (Figure 4). We think many of these may be spurious, due to other systematic differences in reporting for this season. Although at this time we do not have specific data to support or refute this hypothesis. 
 
-```{r get-all-california-data}
+We specifically compare two states with levels of community transmission in the US, California and Washington (Figure 5). In California, levels of ILI not due to influenza (rILI-) have been increasing in recent weeks and were higher than they have ever been in February, although on par with peaks in other seasons. In Washington, no anomalous levels of rILI- have been detected.
+
+
+```{r get-all-state-data}
 ## state level
-dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
-california <- dat[dat$region == "California",]
+state_dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
+##california <- state_dat[state_dat$region == "California",]
 
-labdat <- who_nrevss(region = "state") 
-labdat <- labdat$clinical_labs
-labdat_ca <- labdat[labdat$region=="California",]
+state_labdat <- who_nrevss(region = "state") 
+state_labdat_comb <- bind_rows(state_labdat$clinical_labs, state_labdat$combined_prior_to_2015_16)
 
-all_data_ca <- california %>% right_join(labdat_ca) 
+all_data_state <- state_dat %>% right_join(state_labdat_comb) 
 
-all_data_ca$season <- ifelse(
-  all_data_ca$week <= 39,
-  paste0(all_data_ca$year - 1, "/", all_data_ca$year),
-  paste0(all_data_ca$year, "/", all_data_ca$year + 1)
+all_data_state$season_week <- ifelse(
+  all_data_state$week <= 30,
+  all_data_state$week + MMWRweek(MMWRweek:::start_date(all_data_state$year) - 1)$MMWRweek - 30,
+  all_data_state$week - 30
 )
 
-all_data_ca$week <- factor(all_data_ca$week ,levels=c(21:52,1:20))
 
-california_baseline <- all_data_ca %>% dplyr::group_by(season) %>% dplyr::summarise(baseline=mean(unweighted_ili[1:2]))
+all_data_state$season <- ifelse(
+  all_data_state$week <= 39,
+  paste0(all_data_state$year - 1, "/", all_data_state$year),
+  paste0(all_data_state$year, "/", all_data_state$year + 1)
+)
 
-all_data_ca_w_baseline <- all_data_ca %>% left_join(california_baseline)
+state_baselines <- all_data_state %>% dplyr::group_by(season, region) %>% dplyr::summarise(baseline=mean(unweighted_ili[1:2]))
+
+all_data_state <- all_data_state %>% left_join(state_baselines)
   
-all_data_ca_w_baseline$rili <- (100 - as.numeric(as.character(all_data_ca_w_baseline$percent_positive))) * (all_data_ca_w_baseline$unweighted_ili/all_data_ca_w_baseline$baseline) / 100
+all_data_state$rili_minus <- (100 - as.numeric(as.character(all_data_state$percent_positive))) * (all_data_state$unweighted_ili/all_data_state$baseline) / 100
 
 
-p_ilineg2 <- ggplot(all_data_ca_w_baseline[all_data_ca_w_baseline$week %in% c(40:52,1:20),], aes(y=rili, x=week, color=season,group=season)) + 
-  geom_line()  +
-  geom_line(data=filter(all_data_ca_w_baseline, season %in% c("2019/2020")), size=1) +
-  ylab("(1 - proportion positive) * (uwILI/baseline)") + xlab(NULL) +
-  theme(legend.position = "bottom") +
-  xlab("season week") +
-  ggtitle("(1 - proportion positive) * (uwILI/CA baseline)") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-p_ilineg2
 ```
 
-#### Washington
+```{r calc-avg-sd-all-states, fig.height=6, fig.cap="Figure showing Z scores by week for each state in the US. Tiles with a dark black outline indicate locations where the observed rILI- was higher in that week of the season than had ever been observed in the last 22 seasons. Some states have no reported tests for a given week and so the rILI- is missing for that week. "}
 
-Similarly in Washington,
+region_means_and_sds <- all_data_state %>%
+  group_by(region) %>%
+  mutate(
+    rili_minus_lag1 = lag(rili_minus), 
+    rili_minus_lead1 = lead(rili_minus)
+  ) %>%
+  ungroup() %>%
+  filter(season != "2019/2020") %>%
+  group_by(region, season_week) %>%
+  summarize(
+    avg_rili_minus1 = mean(rili_minus), 
+    sd_rili_minus1 = sd(rili_minus),
+    max_rili_minus = max(rili_minus),
+    avg_rili_minus = mean(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE), 
+    sd_rili_minus = sd(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE))
 
-```{r get-all-washington-data}
-## state level
-dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
-washington <- dat[dat$region == "Washington",]
+## merge with region data and calculate z-scores for each week
+all_data_state_z <- all_data_state %>%
+  left_join(region_means_and_sds, by=c("region", "season_week")) %>%
+  mutate(
+    z_score = (rili_minus-avg_rili_minus)/sd_rili_minus,
+    z_score_bin = cut(z_score, breaks = c(-Inf, seq(-3, 3, by=1), Inf), ordered_result = TRUE),
+    rili_minus_is_max = rili_minus >= max_rili_minus
+    )
 
-labdat <- who_nrevss(region = "state") 
-labdat <- labdat$clinical_labs
-labdat_wa <- labdat[labdat$region=="Washington",]
+all_data_state_z$z_score_bin <- factor(all_data_state_z$z_score_bin, levels=rev(levels(all_data_state_z$z_score_bin)))
 
-all_data_wa <- washington %>% right_join(labdat_wa) 
+all_data_state_current_season <- all_data_state_z %>%
+  filter(season=="2019/2020") %>%
+  mutate(region = reorder(region, z_score, FUN=function(x) mean(x, na.rm=TRUE)))
 
-all_data_wa$season <- ifelse(
-  all_data_wa$week <= 39,
-  paste0(all_data_wa$year - 1, "/", all_data_wa$year),
-  paste0(all_data_wa$year, "/", all_data_wa$year + 1)
-)
+p_state_z <- ggplot(all_data_state_current_season) +
+  geom_tile(aes(x=wk_date, y=region, fill=z_score_bin, color=rili_minus_is_max), size=.5, width=6.5, height=0.9) +
+  scale_fill_brewer(palette="RdYlBu", drop=FALSE, name="Z score") +
+  scale_color_manual(values = c(NA, "black"), labels=NULL) +
+  xlab(NULL) + ylab(NULL) +
+  ggtitle("Z score of rILI- for each week in 2019/2020 season") +
+  guides(color=FALSE) +
+  scale_x_date(expand=c(0.01,0.01), limits=c(as.Date("2019-09-25"), as.Date("2020-05-01")), date_breaks = "1 month", date_labels = "%b")
 
-all_data_wa$week <- factor(all_data_wa$week ,levels=c(21:52,1:20))
+p_state_z
+```
 
-washington_baseline <- all_data_wa %>% dplyr::group_by(season) %>% dplyr::summarise(baseline=mean(unweighted_ili[1:2]))
 
-all_data_wa_w_baseline <- all_data_wa %>% left_join(washington_baseline)
+
+```{r get-single-state-data}
+plot_state <- function(state_name, data=all_data_state_z) {
+  tmp <- filter(all_data_state_z, region==state_name)
   
-all_data_wa_w_baseline$rili <- (100 - as.numeric(as.character(all_data_wa_w_baseline$percent_positive))) * (all_data_wa_w_baseline$unweighted_ili/all_data_wa_w_baseline$baseline) / 100
-
-
-p_ilineg2 <- ggplot(all_data_wa_w_baseline[all_data_wa_w_baseline$week %in% c(40:52,1:20),], aes(y=rili, x=week, color=season,group=season)) + 
-  geom_line()  +
-  geom_line(data=filter(all_data_wa_w_baseline, season %in% c("2019/2020")), size=1) +
-  ylab("(1 - proportion positive) * (uwILI/WA baseline)") + xlab(NULL) +
+  ggplot(tmp, aes(y=rili_minus, x=season_week, group=season)) + 
+  geom_line(color="grey", alpha=.4) +
+  geom_line(data=filter(tmp, season=="2009/2010"), size=1, color="red", alpha=.5) +
+  geom_line(data=filter(tmp, season=="2019/2020"), size=1, color="black") +
+  ylab("rILI-") + xlab(NULL) +
   theme(legend.position = "bottom") +
-  xlab("season week") +
-  ggtitle("(1 - proportion positive) * (uwILI/WA baseline)") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-p_ilineg2
-```
- <!--
- v1 results below this set to eval=FALSE
- -->
-```{r get-nat-data, eval=FALSE}
-## national level
-dat <- ilinet(region = "national")
-
-labdat <- who_nrevss(region = "national")
-
-alldat <- left_join(labdat$clinical_labs, dat)
-
-alldat$season_week <- ifelse(
-    alldat$week <= 30,
-    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
-    alldat$week - 30
-)
-
-alldat$season <- ifelse(
-    alldat$week <= 30,
-    paste0(alldat$year - 1, "/", alldat$year),
-    paste0(alldat$year, "/", alldat$year + 1)
-)
+  geom_vline(aes(xintercept=this_season_week), linetype="dashed", color="grey") +
+  xlab(NULL) +
+  scale_x_continuous(breaks = label_df$season_week, labels=label_df$season_week_label) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle(paste(state_name))
+}
 ```
 
-```{r national-plot, fig.cap="\\label{fig:national-plot}National level plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI).", eval=FALSE}
-
-# ggplot(alldat, aes(y=percent_positive/weighted_ili, x=week_start)) + 
-#     geom_point() +
-#     scale_x_date(limits=as.Date(c("2015-10-01", Sys.Date())))
-
-p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
-    geom_line() + 
-    ggtitle("National level") + 
-    ylab("wILI") + xlab(NULL) +
-    theme(legend.position = "none")
-p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
-    geom_line()+ 
-    ylab("% positive") + xlab(NULL) +
-    theme(legend.position = "none")
-p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
-    geom_line() + 
-    ylab("% positive/wILI") + xlab(NULL) +
-    theme(legend.position = "bottom") +
-    xlab("season week")
-
-grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
-```
-
-```{r get-reg10-data, cache=TRUE, eval=FALSE}
-## regional level
-dat <- ilinet(region = "hhs") %>% filter(region=="Region 10")
-
-labdat <- who_nrevss(region = "hhs") 
-
-alldat <- labdat$clinical_labs %>% 
-    filter(region=="Region 10") %>%
-    left_join(dat)
-
-alldat$season_week <- ifelse(
-    alldat$week <= 30,
-    alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
-    alldat$week - 30
-)
-
-alldat$season <- ifelse(
-    alldat$week <= 30,
-    paste0(alldat$year - 1, "/", alldat$year),
-    paste0(alldat$year, "/", alldat$year + 1)
-)
-```
-
-```{r region10-plot, fig.cap="\\label{fig:region10-plot}US HHS Region 10 plots showing wILI values since the 2015/2016 season (top), percent of all specimens tested that are positive for flu (middle), and the ratio of the two (bottom, \\% pos / wILI).", eval=FALSE}
-p_ili <- ggplot(alldat, aes(y=weighted_ili, x=season_week, color=season)) + 
-    geom_line() + ggtitle("HHS Region 10") + 
-    ylab("wILI") + xlab(NULL) +
-    theme(legend.position = "none")
-
-p_pctpos <- ggplot(alldat, aes(y=percent_positive, x=season_week, color=season)) + 
-    geom_line() + 
-    ylab("% positive") + xlab(NULL) +
-    theme(legend.position = "none")
-
-p_quo <- ggplot(alldat, aes(y=percent_positive/weighted_ili, x=season_week, color=season)) + 
-    geom_line() +
-    ylab("% positive/wILI") + xlab(NULL) +
-    theme(legend.position = "bottom") +
-    xlab("season week")
-
-grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
+```{r get-sd-data, fig.height=6, fig.cap="Selected individual state-level plots showing the proportion of ILI not due to influenza over the current 2019/2020 season (dark black line) and past 9 seasons, starting with 2010/2011. "}
+grid.arrange(plot_state("California"),
+  plot_state("Washington"),
+  plot_state("Maine"),
+  plot_state("South Dakota"),
+  plot_state("New Mexico"),
+  plot_state("Missouri"),
+  nrow=3, ncol=2)
 ```
 
 
@@ -438,7 +385,11 @@ grid.arrange(p_ili, p_pctpos, p_quo, heights=c(1.2, 1, 1.6), nrow=3)
 
 [3] Imai, N., Cori, A., Dorigatti, I., Baguelin, M., Donnelly, C. A., & Riley, S. (n.d.). Report 3: Transmissibility of 2019-nCoV. https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-2019-nCoV-transmissibility.pdf.
 
+[4] Bedford T, Neher R, Hadfield J, Hodcroft E, Ilcisin M, M\"uller N. Genomic analysis of COVID-19 spread. Situation report 2020-03-04. https://nextstrain.org/narratives/ncov/sit-rep/2020-03-04 
+
 ## Changelog
+
+6 March 2020: updated for new ILI data, genomic commentary, some state figures.
 
 2 March 2020: Added state-level analysis, HHS region map, z-score code and figure. 
 

@@ -84,7 +84,7 @@ Reich}
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2020-03-03 12:11:46 CET}
+    \date{2020-03-06 17:09:26 CET}
 
 
 \begin{document}
@@ -95,22 +95,28 @@ Reich}
 
 In December 2019, an outbreak of a novel, SARS-like coronavirus was
 detected in Wuhan, China. In the intervening weeks, case counts have
-grown substantially. As of this writing, there are 83,652 confirmed
-cases globally and at least 2,858 deaths of what is currently named
+grown substantially. As of this writing, there are 95,333 confirmed
+cases globally and at least 3,282 deaths of what is currently named
 COVID-19 {[}1{]}. It is now understood that the virus transmits
 efficiently from person to person, with R0 estimates above 2 and perhaps
 as high as 3.7 {[}2, 3{]}.
 
-Sustained human-to-human transmission has begun to be observed outside
-of China, and the possibility of unrecognized spread in the United
-States and other countries cannot be ruled out at this stage. As an
-early effort to explore this scenario in the United States, we compare
-the proportion of weighted influenza like illness (wILI) that tests
-negative for influenza during the 2019-2020 flu season to trends from
-previous seasons. If it were the case that COVID-19 were circulating
-unobserved in the United States, we might expect to see in recent weeks
-a higher fraction of ILI specimens that test negative for influenza
-compared to the same time in past seasons.
+Sustained human-to-human transmission has been observed outside of
+China, and the possibility of unrecognized spread in the United States
+and other countries cannot be ruled out at this stage. Emerging
+phylogenetic data suggest that sequenced cases to date in the United
+States and globally share a common ancestor between mid-November and
+mid-December 2019. The same analyses suggest that some transmission
+chains may have been progressing, undetected, in the Pacific northwest
+of the United States since mid-January.{[}4{]} As an early effort to
+explore the scenario of undetected spread in the United States, we
+analyze publicly available data on influenza-like illness in the US.
+Specifically, we compare the proportion of weighted influenza like
+illness (wILI) that tests negative for influenza during the 2019-2020
+flu season to trends from previous seasons. If it were the case that
+COVID-19 were circulating unobserved in the United States, we might
+expect to see in recent weeks a higher fraction of ILI specimens that
+test negative for influenza compared to the same time in past seasons.
 
 \hypertarget{methods}{%
 \subsection{Methods}\label{methods}}
@@ -134,11 +140,11 @@ sentinel providers that had the primary complaint of fever plus an
 additional influenza-like symptom (cough, sore throat, etc\ldots{}). For
 the WHO-NREVSS data, we obtained the total number of specimens tested by
 participating clinical laboratories, as well as the percent of those
-specimens that tested positive for influenza. These data have been
-aggregated into a single reporting system since the 2015/2016 season, so
-we use data since that time. Both data sources are available at the
-weekly time-scale, defined as using the MMWR week standard used by the
-CDC.
+specimens that tested positive for influenza. We used 23 seasons of data
+for HHS regions, beginning with the 1997/1998 season, and 10 seasons of
+data for states, beginning with the 2010/2011 season. All data sources
+are available at the weekly time-scale, defined as using the MMWR week
+standard used by the CDC.
 
 The code used to produce this report is available on GitHub at
 \url{https://github.com/reichlab/ncov}.
@@ -157,11 +163,28 @@ differences in the types of health care providers reporting into ILINet.
 Therefore, some increases in reported wILI from one season to another
 may be driven in part by changes in provider type make up. An
 approximate way to adjust for this is by dividing reported wILI by the
-baseline for a given region and season. Baselines are provided by the
-CDC. This results in the following calculation of a \textbf{r}elative
-ILI-.
+baseline for a given region and season. Baselines for HHS regions are
+provided by the CDC. Baselines for states are calculated as the average
+of the first two weekly ILI observations for a given season, thinking
+that this adjusts for any systematic adjustments to the provider mix in
+each season. These baselines enable the following calculation of a
+\textbf{r}elative ILI-.
 
 \[\text{rILI-} = (1 - \text{proportion of tests positive for influenza}) \times \frac{\text{wILI}}{\text{baseline level for ILI}}\]
+
+\hypertarget{measuring-anomalies-in-ili--during-a-season}{%
+\paragraph{Measuring anomalies in ILI- during a
+season}\label{measuring-anomalies-in-ili--during-a-season}}
+
+We developed a metric to measure the degree to which a given ILI-
+observation is significantly higher or lower than expectation, based on
+past trends at similar times of the year. For each region and
+season-week, we averaged observations from the past seasons (22 seasons
+for regions, 9 for states) for the given season week and one season week
+on either side and calculated the standard deviation based on these same
+observations. We then computed ``z-scores'' as the number of standard
+deviations above or below the average a particular rILI- observation is:
+\[\text{Z} =  \frac{\text{rILI-} - \overline{\text{rILI-}}}{sd{\text{rILI-}}}\]
 
 \hypertarget{results-discussion}{%
 \subsection{Results \& Discussion}\label{results-discussion}}
@@ -170,22 +193,24 @@ ILI-.
 \subsubsection{Regional-level analyses}\label{regional-level-analyses}}
 
 We plotted ILI- and rILI- as a function of the week within each flu
-season and stratified by region (Figure 2).
+season and stratified by region (Figure 2). Additionally, we plotted the
+2019/2020 Z-scores for all regions as a function of week of season
+(Figure 3).
 
 In the last weeks of 2019 and first weeks of 2020, the observations of
-ILI burden due to non-influenza pathogens (rILI-) are, relative to what
-has been observed in the past 5 seasons, on the high side. However,
-rILI- also is not dramatically out of line with what has been observed
-in seen in previous years.
+ILI burden due to non-influenza pathogens (rILI-) have been, relative to
+what has been observed in the past 22 seasons, above the seasonal
+average. However, the measures of rILI- also have not been consistently
+more than 3 standard deviations above the average (Figure 3).
 
 These results do not particularly rule out any possibilities of COVID-19
 transmission occuring in the US at the time of the most recent data
-reporting or not. If COVID-19 were present in the US, these data would
-seem to suggest that its incidence would be currently relatively small,
-as it would not be adding much relative to levels of rILI- observed in
-past seasons. However, it is hard to determine this conclusively, as we
-have not performed an exhaustive analysis about what other pathogens
-were or were not ciruclating in those past seasons.
+reporting or not. If COVID-19 were circulating widely in the US, these
+data would seem to suggest that its incidence would be currently
+relatively small, as it would not be adding much relative to levels of
+rILI- observed in past seasons. However, it is hard to determine this
+conclusively, as we have not performed an exhaustive analysis about what
+other pathogens were or were not ciruclating in those past seasons.
 
 If COVID-19 were to cause significant influenza-like illness in
 subsequent weeks, we might expect the rILI- metric to increase and be
@@ -199,30 +224,58 @@ the rILI- metric.
 \begin{figure}
 \centering
 \includegraphics{ili-labtest-report_files/figure-latex/all-region-plot-ILI-1.pdf}
-\caption{\label{fig:all-region-plot}US HHS Regions plots showing ILI-
-values since the 2015/2016 season (top), and rILI- values (bottom).}
+\caption{\label{fig:all-region-plot}US HHS Regions plots showing rILI-
+values since the 1997/1998 season (grey lines) and the 2019/2020 season
+(dark black line). The line highlighted in red is the 2009/2010 H1N1
+pandemic season. The dates on the x-axis correspond to the dates for the
+2019/2020 season, with previous seasons lined up approximately the same
+time by week. The vertical dashed line shows the date at which this plot
+was generated. The small gap between the current season's data and the
+line indicates the lag in ILI reporting, typically one week.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ili-labtest-report_files/figure-latex/std-dev-analysis-1.pdf}
+\caption{Figure showing Z scores by week for each HHS region. Tiles with
+a dark black outline indicate locations where the observed rILI- was
+higher in that week of the season than had ever been observed in the
+last 22 seasons.}
 \end{figure}
 
 \hypertarget{state-level-analyses}{%
 \subsubsection{State-level analyses}\label{state-level-analyses}}
 
-\hypertarget{california}{%
-\paragraph{California}\label{california}}
+The z-score calculations show a few states with systematically higher
+than average observations (Figure 4). We think many of these may be
+spurious, due to other systematic differences in reporting for this
+season. Although at this time we do not have specific data to support or
+refute this hypothesis.
 
-As of March 1st 2020 there have been documented cases of community
-spread in California. We apply a similar analysis above to examine the
-departure of the California ILI level from the state baseline. Here a
-season specific baseline is computed as the average of the ILI values
-for epiweek 40-42.
+We specifically compare two states with levels of community transmission
+in the US, California and Washington (Figure 5). In California, levels
+of ILI not due to influenza (rILI-) have been increasing in recent weeks
+and were higher than they have ever been in February, although on par
+with peaks in other seasons. In Washington, no anomalous levels of rILI-
+have been detected.
 
-\includegraphics{ili-labtest-report_files/figure-latex/get-all-california-data-1.pdf}
+\begin{figure}
+\centering
+\includegraphics{ili-labtest-report_files/figure-latex/calc-avg-sd-all-states-1.pdf}
+\caption{Figure showing Z scores by week for each state in the US. Tiles
+with a dark black outline indicate locations where the observed rILI-
+was higher in that week of the season than had ever been observed in the
+last 22 seasons. Some states have no reported tests for a given week and
+so the rILI- is missing for that week.}
+\end{figure}
 
-\hypertarget{washington}{%
-\paragraph{Washington}\label{washington}}
-
-Similarly in Washington,
-
-\includegraphics{ili-labtest-report_files/figure-latex/get-all-washington-data-1.pdf}
+\begin{figure}
+\centering
+\includegraphics{ili-labtest-report_files/figure-latex/get-sd-data-1.pdf}
+\caption{Selected individual state-level plots showing the proportion of
+ILI not due to influenza over the current 2019/2020 season (dark black
+line) and past 9 seasons, starting with 2010/2011.}
+\end{figure}
 
 \hypertarget{works-cited}{%
 \subsection{Works Cited}\label{works-cited}}
@@ -240,8 +293,18 @@ the 2019 novel coronavirus outbreak in China. MedRxiv,
 A., \& Riley, S. (n.d.). Report 3: Transmissibility of 2019-nCoV.
 \url{https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-2019-nCoV-transmissibility.pdf}.
 
+{[}4{]} Bedford T, Neher R, Hadfield J, Hodcroft E, Ilcisin M, M"uller
+N. Genomic analysis of COVID-19 spread. Situation report 2020-03-04.
+\url{https://nextstrain.org/narratives/ncov/sit-rep/2020-03-04}
+
 \hypertarget{changelog}{%
 \subsection{Changelog}\label{changelog}}
+
+6 March 2020: updated for new ILI data, genomic commentary, some state
+figures.
+
+2 March 2020: Added state-level analysis, HHS region map, z-score code
+and figure.
 
 29 February 2020: updated for new ILI data. Minor rephrasing in intro.
 
@@ -259,8 +322,6 @@ convey the level of uncertainty in our analysis. We also added a heavier
 line for the 2019/2020 season in the figures.
 
 25 January 2020: First version of report released.
-
-1 March 2020: Added California analysis.
 
 
 \end{document}
