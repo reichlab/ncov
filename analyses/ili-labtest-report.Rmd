@@ -1,6 +1,6 @@
 ---
 title: Looking for evidence of a high burden of COVID-19 in the United States from influenza-like illness data
-author: "Caitlin Rivers, Evan L. Ray, Graham C. Gibson, Estee Cramer, Nicholas G. Reich"
+author: "Nicholas G. Reich, Evan L. Ray, Graham C. Gibson, Estee Cramer, Caitlin Rivers"
 date: "`r Sys.time()` CET"
 output:  
     pdf_document: 
@@ -27,9 +27,9 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, SARS-like coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 95,333 confirmed cases globally and at least 3,282 deaths of what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3]. 
+In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 132,758  confirmed cases globally and at least 4,955 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
 
-Sustained human-to-human transmission has been observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. The same analyses suggest that some transmission chains may have been progressing, undetected, in the Pacific northwest of the United States since mid-January.[4]  As an early effort to explore the scenario of undetected spread in the United States, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that COVID-19 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
+Sustained human-to-human transmission has been observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. The same analyses suggest that some transmission chains may have been progressing, undetected, in the Pacific northwest of the United States since mid-January.[4]  As an early effort to explore the scenario of undetected spread in the United States, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that SARS-CoV-2 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
 
 ## Methods
@@ -268,7 +268,13 @@ ggplot(filter(region_data, season=="2019/2020")) +
 
 The z-score calculations show a few states with systematically higher than average observations (Figure 4). We think many of these may be spurious, due to other systematic differences in reporting for this season. Although at this time we do not have specific data to support or refute this hypothesis. 
 
-We specifically compare two states with levels of community transmission in the US, California and Washington (Figure 5). In California, levels of ILI not due to influenza (rILI-) have been increasing in recent weeks and were higher than they have ever been in February, although on par with peaks in other seasons. In Washington, no anomalous levels of rILI- have been detected in 2020.
+<!-- We specifically compare two states with levels of community transmission in the US, California and Washington (Figure 5). In California, levels of ILI not due to influenza (rILI-) have been increasing in recent weeks and were higher than they have ever been in February, although on par with peaks in other seasons. In Washington, no anomalous levels of rILI- have been detected in 2020. -->
+
+We note an increased signal in California and Missouri (Figure 5). California is known to have community transmission of SARS-CoV-2 (198 cases, 44 thought to be locally acquired as of this writing), but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
+
+Missouri has recorded relatively few cases of COVID-19 to date. We note that only 9 providers contributed data to the ILI surveillance network in the most recent week of data compared to 11 to 13 in earlier weeks. Provider type (e.g. pediatrician, hospital) is known to influence ILI data. If there are systematic differences in the population seeking care at different providers, that could explain the recently observed spike. We have been in touch with the Missouri Department of Health. They are aware of our finding and have confirmed that they are carefully monitoring for SARS-CoV-2 activity.
+
+These results do not necessarily mean that there is circulation of SARS-CoV-2 in these two states. Syndromic surveillance data is best used to guide further investigation, not as a definitive source. Additional study is needed to understand the burden of SARS-CoV-2 across U.S. states.
 
 
 ```{r get-all-state-data}
@@ -386,9 +392,19 @@ plot_state <- function(state_name, data=all_data_state_z) {
 ```{r get-sd-data, fig.height=6, fig.cap="Selected individual state-level plots showing the proportion of ILI not due to influenza over the current 2019/2020 season (dark black line) and past 9 seasons, starting with 2010/2011. "}
 grid.arrange(plot_state("California"),
   plot_state("Washington"),
-  plot_state("Illinois"),
+  plot_state("Massachusetts"),
   plot_state("Missouri"),
   nrow=3, ncol=2)
+```
+
+```{r save-data}
+date_string <- Sys.Date()
+reg_filename <- paste0("ili-data/region-data-", Sys.Date(), ".csv")
+state_filename <- paste0("ili-data/state-data-", Sys.Date(), ".csv")
+
+write_csv(region_data, path = reg_filename)
+write_csv(all_data_state_z, path=state_filename)
+
 ```
 
 
@@ -405,6 +421,8 @@ grid.arrange(plot_state("California"),
 \clearpage
 
 ## Changelog
+
+13 March 2020: updated for new ILI data, including interpretation about Missouri.
 
 6 March 2020: updated for new ILI data, genomic commentary, some state figures.
 
