@@ -1,6 +1,6 @@
 ---
 title: Looking for evidence of a high burden of COVID-19 in the United States from influenza-like illness data
-author: "Nicholas G. Reich, Evan L. Ray, Graham C. Gibson, Estee Cramer, Caitlin Rivers"
+author: "Nicholas G. Reich, Evan L. Ray, Graham C. Gibson, Estee Cramer, Caitlin M. Rivers"
 date: "`r Sys.time()` CET"
 output:  
     pdf_document: 
@@ -10,7 +10,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
-
 library(tidyverse)
 library(cdcfluview)
 library(ggthemes)
@@ -18,7 +17,6 @@ library(maps)
 library(MMWRweek)
 library(gridExtra)
 library(cdcfluutils) # devtools::install_github("reichlab/cdcfluutils")
-
 theme_set(theme_bw())
 ```
 
@@ -27,9 +25,9 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 209,839  confirmed cases globally and at least 8,778 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
+In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are over 209,000 confirmed cases globally and at least 8,778 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
 
-Sustained human-to-human transmission has been observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. The same analyses suggest that some transmission chains may have been progressing, undetected, in the Pacific northwest of the United States since mid-January.[4]  As an early effort to explore the scenario of undetected spread in the United States, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that SARS-CoV-2 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
+Community transmission is now ongoing in many locations in the United States. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. However, due to delays in making widespread diagnostic testing available, the burden of COVID-19 in the United States is not well understood. As an effort to understand trends in people seeking care for respiratory symptoms, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that SARS-CoV-2 were causing widespread disease in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
 
 ## Methods
@@ -40,7 +38,6 @@ We downloaded publicly available ILINet and WHO-NREVSS data for US Health and Hu
 
 ```{r hhs-regions-map, cache=TRUE, , fig.cap="\\label{fig:hhs-regions-map}US HHS Regions are made up of groups of states.", fig.height = 3}
 us_states <- map_data("state")
-
 us_states_update <- us_states %>%
     mutate(hhs_region = case_when(
         region %in% c("connecticut", "maine", "massachusetts", "new hampshire", "rhode island", "vermont") ~ "hhs1", 
@@ -54,9 +51,7 @@ us_states_update <- us_states %>%
         region %in% c("arizona","california", "hawaii", "nevada") ~ "hhs9",
         region %in% c("seattle", "alaska", "idaho", "oregon", "washington") ~ "hhs10")) %>%
     mutate(hhs_region = as.factor(hhs_region)) 
-
 CDCcolors <- c("#5B7781", "#DA9D9C","#653C17", "#B2741B",  "#DCD744",   "#689A61",  "#E38F45",  "#518FAB",  "#A59070",  "#A0CCDC")
-
 hhs_region_plot <- ggplot(us_states_update, mapping = aes(x = long, y = lat, group = group, fill = hhs_region)) + geom_polygon(color = "gray90", size = .1) +
     guides(fill = FALSE) +
     annotate(geom="text", x=-70, y= 45, label="1", color="white", size = 7) +
@@ -73,12 +68,11 @@ hhs_region_plot <- ggplot(us_states_update, mapping = aes(x = long, y = lat, gro
     ggtitle("US Health and Human Services Regions") +
     theme_map()+
     coord_fixed(ratio = 1.4:1)
-
 hhs_region_plot
 ```
 
 
-From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, sore throat, etc...). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. We used 23 seasons of data for HHS regions, beginning with the 1997/1998 season, and 10 seasons of data for states, beginning with the 2010/2011 season. All data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
+From the ILINet dataset, we downloaded weighted influenza-like illness (wILI), which measures the percentage of doctor's office visits at sentinel providers that had the primary complaint of fever plus an additional influenza-like symptom (cough, and/or sore throat). For the WHO-NREVSS data, we obtained the total number of specimens tested by participating clinical laboratories, as well as the percent of those specimens that tested positive for influenza. We used 23 seasons of data for HHS regions, beginning with the 1997/1998 season, and 10 seasons of data for states, beginning with the 2010/2011 season. All data sources are available at the weekly time-scale, defined as using the MMWR week standard used by the CDC. 
 
 The code used to produce this report is available on GitHub at https://github.com/reichlab/ncov.
 
@@ -94,45 +88,37 @@ $$\text{rILI-} = (1 - \text{proportion of tests positive for influenza}) \times 
 
 
 <!-- As a first approximation to compute a metric of similarity between the two metrics, we chose to divide the percent positivity from NREVSS by the wILI. The resulting ratio should be smaller when wILI values are high relative to the percent positivity of clinical tests. Therefore, low values of this metric would indicate that there is lower percent positivity than ``expected`` given the current levels of wILI. 
-
 We note that a limitation of this metric is that wILI values can be quite small, which could lead to unstable estimates, since this number is in the denominator.
 -->
 
 #### Measuring anomalies in ILI- during a season
 
-We developed a metric to measure the degree to which a given ILI- observation is significantly higher or lower than expectation, based on past trends at similar times of the year.
-For each region and season-week, we averaged observations from the past seasons (22 seasons for regions, 9 for states) for the given season week and one season week on either side and calculated the standard deviation based on these same observations. We then computed "z-scores" as the number of standard deviations above or below the average a particular rILI- observation is:
+We developed a metric to measure the degree to which a given ILI- observation is significantly higher or lower than expectation, based on past trends at similar times of the year. For each region and season-week, we averaged observations from the past seasons (22 seasons for regions, 9 for states) for the given season week and one season week on either side and calculated the standard deviation based on these same observations. We then computed "z-scores" as the number of standard deviations above or below the average a particular rILI- observation is:
 $$\text{Z} =  \frac{\text{rILI-} - \overline{\text{rILI-}}}{sd{\text{rILI-}}}$$
 
 ```{r get-all-reg-data}
 ## regional level
 dat <- ilinet(region = "hhs")# %>% filter(region=="Region 10")
-
 labdat <- who_nrevss(region = "hhs") 
-
 alldat <- labdat$clinical_labs %>% 
   bind_rows(labdat$combined_prior_to_2015_16) %>%
   left_join(dat)
-
 alldat$season_week <- ifelse(
   alldat$week <= 30,
   alldat$week + MMWRweek(MMWRweek:::start_date(alldat$year) - 1)$MMWRweek - 30,
   alldat$week - 30
 )
-
 alldat$season <- ifelse(
   alldat$week <= 39,
   paste0(alldat$year - 1, "/", alldat$year),
   paste0(alldat$year, "/", alldat$year + 1)
 )
-
 alldat <- alldat %>%
   mutate(
     region = cdcfluutils::to_standard_location_code(region)
   )
   
 alldat$regionnew <- factor(alldat$region, levels=paste0("hhs", 1:10), ordered=TRUE)
-
 ```
 
 ## Results \& Discussion
@@ -147,11 +133,9 @@ We plotted ILI- and rILI- as a function of the week within each flu season and s
 <!-- swapped out 1/26/2019: Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020. -->
 
 <!-- the below two paragraphs added on 1/26/2020, revised on 2/16/2020-->
-In the last weeks of 2019 and first weeks of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) have been, relative to what has been observed in the past 22 seasons, above the seasonal average. However, the measures of rILI- also have not been consistently more than 3 standard deviations above the average (Figure 3).
+In the last weeks of 2019 and first weeks of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) have been, relative to what has been observed in the past 22 seasons, above the seasonal average. More recently, the measures of rILI- also have risen to more than 3 standard deviations above the average in some regions (Figure 3).
 
-These results do not particularly rule out any possibilities of COVID-19 transmission occuring in the US at the time of the most recent data reporting or not.  If COVID-19 were circulating widely in the US, these data would seem to suggest that its incidence would be currently relatively small, as it would not be adding much relative to levels of rILI- observed in past seasons. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons.
-
-If COVID-19 were to cause significant influenza-like illness in subsequent weeks, we might expect the rILI- metric to increase and be larger than previous seasons. However, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread COVID-19 transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
+These results suggest that there may be enough COVID-19 circulating in the United States to be detectable in the influenza-like illness surveillance system. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons. Also, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread COVID-19 transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
 
 
 
@@ -163,8 +147,6 @@ this_season_week <- ifelse(
   this_week + MMWRweek(MMWRweek:::start_date(this_year) - 1)$MMWRweek - 30,
   this_week - 30
 )
-
-
 label_df <- alldat %>% filter(season=="2018/2019", region=="hhs1") %>% 
   select(season, week, year, season_week) %>%
   mutate(season_week_date=MMWRweek2Date(MMWRweek = week, MMWRyear=year+1)) %>%
@@ -183,8 +165,6 @@ p_ilineg <- ggplot(alldat, aes(y=(100 - percent_positive) * weighted_ili / 100, 
   xlab("season week") +
   facet_wrap( ~ regionnew, ncol = 5) +
   ggtitle("(1 - proportion positive) * wILI")
-
-
 alldat2 <- alldat %>%
   mutate(region = cdcfluutils::to_standard_location_code(region)) %>% 
   left_join(cdcfluutils::flu_onset_baselines %>% 
@@ -192,12 +172,8 @@ alldat2 <- alldat %>%
     by = c("region", "season")
   ) %>%
   left_join(label_df, by=c("season_week"))
-
 alldat2$regionnew <- factor(alldat2$region, levels=paste0("hhs", 1:10), ordered=TRUE)
-
 alldat2$rili_minus <- (100 - alldat2$percent_positive) * (alldat2$weighted_ili/alldat2$baseline) / 100
-
-
 p_ilineg2 <- ggplot(alldat2, aes(y=rili_minus, x=season_week, group=season)) + 
   geom_line(color="grey", alpha=.4) +
   geom_line(data=filter(alldat2, season=="2009/2010"), size=1, color="red", alpha=.5) +
@@ -210,7 +186,6 @@ p_ilineg2 <- ggplot(alldat2, aes(y=rili_minus, x=season_week, group=season)) +
   scale_x_continuous(breaks = label_df$season_week, labels=label_df$season_week_label) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   ggtitle("Proportion of ILI not due to influenza, by HHS region")
-
 p_ilineg2
 ```
 
@@ -231,7 +206,6 @@ region_means_and_sds <- alldat2 %>%
     max_rili_minus = max(rili_minus),
     avg_rili_minus = mean(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE), 
     sd_rili_minus = sd(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE))
-
 ## merge with region data and calculate z-scores for each week
 region_data <- alldat2 %>%
   left_join(region_means_and_sds, by=c("region", "season_week")) %>%
@@ -240,17 +214,13 @@ region_data <- alldat2 %>%
     z_score_bin = cut(z_score, breaks = c(-Inf, seq(-3, 3, by=1), Inf), ordered_result = TRUE),
     rili_minus_is_max = rili_minus >= max_rili_minus
     )
-
 region_data$z_score_bin <- factor(region_data$z_score_bin, levels=rev(levels(region_data$z_score_bin)))
-
 ## plot
 # ggplot(filter(region_data, season=="2019/2020")) +
 #   geom_raster(aes(x=wk_date, y=region, fill=z_score)) +
 #   scale_fill_gradient2(low=scales::muted("blue"), high=scales::muted("red"))
-
 # maybe nicer solution to borders here 
 #  https://stackoverflow.com/questions/13258454/marking-specific-tiles-in-geom-tile-geom-raster
-
 ggplot(filter(region_data, season=="2019/2020")) +
   geom_tile(aes(x=wk_date, y=regionnew, fill=z_score_bin, color=rili_minus_is_max), size=.5, width=6.5, height=0.9) +
   scale_fill_brewer(palette="RdYlBu", drop=FALSE, name="Z score") +
@@ -260,17 +230,16 @@ ggplot(filter(region_data, season=="2019/2020")) +
   guides(color=FALSE) +
   scale_x_date(expand=c(0.01,0.01), limits=c(as.Date("2019-09-25"), as.Date("2020-05-01")), date_breaks = "1 month", date_labels = "%b")
   
-
 ```
 
 
 ### State-level analyses
 
-The z-score calculations show a few states with systematically higher than average observations (Figure 4). We think many of these may be spurious, due to other systematic differences in reporting for this season. Although at this time we do not have specific data to support or refute this hypothesis. 
+The z-score calculations show six states with systematically higher than average observations (Figure 4). We think many of these may be spurious, due to other systematic differences in reporting for this season. Although at this time we do not have specific data to support or refute this hypothesis. 
 
 <!-- We specifically compare two states with levels of community transmission in the US, California and Washington (Figure 5). In California, levels of ILI not due to influenza (rILI-) have been increasing in recent weeks and were higher than they have ever been in February, although on par with peaks in other seasons. In Washington, no anomalous levels of rILI- have been detected in 2020. -->
 
-We note an increased signal in California and Missouri (Figure 5). California is known to have community transmission of SARS-CoV-2 (198 cases, 44 thought to be locally acquired as of this writing), but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
+We note an increased signal in California, Missouri, Washington and Massachusetts (Figure 5). California and Washington are known to have community transmission of SARS-CoV-2, but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
 
 Missouri has recorded relatively few cases of COVID-19 to date. We note that only 9 providers contributed data to the ILI surveillance network in the most recent week of data compared to 11 to 13 in earlier weeks. Provider type (e.g. pediatrician, hospital) is known to influence ILI data. If there are systematic differences in the population seeking care at different providers, that could explain the recently observed spike. We have been in touch with the Missouri Department of Health. They are aware of our finding and have confirmed that they are carefully monitoring for SARS-CoV-2 activity.
 
@@ -281,36 +250,26 @@ These results do not necessarily mean that there is circulation of SARS-CoV-2 in
 ## state level
 state_dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
 ##california <- state_dat[state_dat$region == "California",]
-
 state_labdat <- who_nrevss(region = "state") 
 state_labdat_comb <- bind_rows(state_labdat$clinical_labs, state_labdat$combined_prior_to_2015_16)
-
 all_data_state <- state_dat %>% right_join(state_labdat_comb) 
-
 all_data_state$season_week <- ifelse(
   all_data_state$week <= 30,
   all_data_state$week + MMWRweek(MMWRweek:::start_date(all_data_state$year) - 1)$MMWRweek - 30,
   all_data_state$week - 30
 )
-
-
 all_data_state$season <- ifelse(
   all_data_state$week <= 39,
   paste0(all_data_state$year - 1, "/", all_data_state$year),
   paste0(all_data_state$year, "/", all_data_state$year + 1)
 )
-
 state_baselines <- all_data_state %>% dplyr::group_by(season, region) %>% dplyr::summarise(baseline=mean(unweighted_ili[1:2]))
-
 all_data_state <- all_data_state %>% left_join(state_baselines)
   
 all_data_state$rili_minus <- (100 - as.numeric(as.character(all_data_state$percent_positive))) * (all_data_state$unweighted_ili/all_data_state$baseline) / 100
-
-
 ```
 
 ```{r calc-avg-sd-all-states, fig.height=5, fig.cap="Figure showing Z scores by week for each state in the US that has collected and tested more than 5000 specimens for influenza during the 2019/2020 season. Tiles with a dark black outline indicate locations where the observed rILI- was higher in that week of the season than had ever been observed in the last 22 seasons. Some states have no reported tests for a given week and so the rILI- is missing for that week. States are sorted by z-score in the most recent week, with highest scores at the bottom (states with missing z-scores for the most recent week are at the top). "}
-
 region_means_and_sds <- all_data_state %>%
   group_by(region) %>%
   mutate(
@@ -326,7 +285,6 @@ region_means_and_sds <- all_data_state %>%
     max_rili_minus = max(rili_minus),
     avg_rili_minus = mean(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE), 
     sd_rili_minus = sd(c(rili_minus, rili_minus_lag1, rili_minus_lead1), na.rm=TRUE))
-
 ## merge with region data and calculate z-scores for each week
 current_week_start <- max(as.Date(all_data_state$week_start), na.rm=TRUE)
 all_data_state_z <- all_data_state %>%
@@ -337,9 +295,7 @@ all_data_state_z <- all_data_state %>%
     rili_minus_is_max = rili_minus >= max_rili_minus,
     current_z_score = ifelse(week_start==current_week_start, z_score, NA)
     )
-
 all_data_state_z$z_score_bin <- factor(all_data_state_z$z_score_bin, levels=rev(levels(all_data_state_z$z_score_bin)))
-
 states_to_keep <- all_data_state %>% 
   filter(season=="2019/2020") %>% 
   group_by(region) %>% 
@@ -352,11 +308,9 @@ states_to_keep <- all_data_state %>%
   .$region
   # arrange(tot) %>% 
   # print(n=Inf)
-
 all_data_state_current_season <- all_data_state_z %>%
   filter(season=="2019/2020", region %in% states_to_keep) %>%
   mutate(region = reorder(region, current_z_score, FUN=function(x) -mean(x, na.rm=TRUE)), na.last=FALSE)
-
 p_state_z <- ggplot(all_data_state_current_season) +
   geom_tile(aes(x=wk_date, y=region, fill=z_score_bin, color=rili_minus_is_max), size=.5, width=6.5, height=0.9) +
   scale_fill_brewer(palette="RdYlBu", drop=FALSE, name="Z score") +
@@ -365,7 +319,6 @@ p_state_z <- ggplot(all_data_state_current_season) +
   ggtitle("Z score of rILI- for each week in 2019/2020 season") +
   guides(color=FALSE) +
   scale_x_date(expand=c(0.01,0.01), limits=c(as.Date("2019-09-25"), as.Date("2020-05-01")), date_breaks = "1 month", date_labels = "%b")
-
 p_state_z
 ```
 
@@ -401,28 +354,24 @@ grid.arrange(plot_state("California"),
 date_string <- Sys.Date()
 reg_filename <- paste0("ili-data/region-data-", Sys.Date(), ".csv")
 state_filename <- paste0("ili-data/state-data-", Sys.Date(), ".csv")
-
 write_csv(region_data, path = reg_filename)
 write_csv(all_data_state_z, path=state_filename)
-
 ```
 
 
 ## Works Cited
 
-[1] https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports/
+[1] https://www.who.int/docs/default-source/coronaviruse/situation-reports/20200319-sitrep-59-covid-19.pdf?sfvrsn=c3dcdef9_2
 
 [2] Yang, Y., Lu, Q., Liu, M., Wang, Y., Zhang, A., Jalali, N., Dean, N., Longini, I., Halloran, M. E., Xu, B., Zhang, X., Wang, L., Liu, W., & Fang, L. (2020). Epidemiological and clinical features of the 2019 novel coronavirus outbreak in China. MedRxiv, 2020.02.10.20021675. https://doi.org/10.1101/2020.02.10.20021675
 
 [3] Imai, N., Cori, A., Dorigatti, I., Baguelin, M., Donnelly, C. A., & Riley, S. (n.d.). Report 3: Transmissibility of 2019-nCoV. https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-2019-nCoV-transmissibility.pdf.
 
-[4] Bedford T, Neher R, Hadfield J, Hodcroft E, Ilcisin M, M\"uller N. Genomic analysis of COVID-19 spread. Situation report 2020-03-04. https://nextstrain.org/narratives/ncov/sit-rep/2020-03-04 
-
 \clearpage
 
 ## Changelog
 
-20 March 2020: updated for new ILI data
+39 March 2020: updateed for new ILI data, and reframed the introduction to acknowledge community transmission in the US.
 
 13 March 2020: updated for new ILI data, including interpretation about Missouri.
 
@@ -441,4 +390,3 @@ write_csv(all_data_state_z, path=state_filename)
 26 January 2020: Although our overall assessment has not changed and our analysis has not been updated, we have updated the discussion to better convey the level of uncertainty in our analysis. We also added a heavier line for the 2019/2020 season in the figures.
 
 25 January 2020: First version of report released.
-
