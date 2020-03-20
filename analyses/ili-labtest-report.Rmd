@@ -27,7 +27,7 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 132,758  confirmed cases globally and at least 4,955 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
+In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are 209,839  confirmed cases globally and at least 8,778 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
 
 Sustained human-to-human transmission has been observed outside of China, and the possibility of unrecognized spread in the United States and other countries cannot be ruled out at this stage. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. The same analyses suggest that some transmission chains may have been progressing, undetected, in the Pacific northwest of the United States since mid-January.[4]  As an early effort to explore the scenario of undetected spread in the United States, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that SARS-CoV-2 were circulating unobserved in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
@@ -421,6 +421,8 @@ write_csv(all_data_state_z, path=state_filename)
 \clearpage
 
 ## Changelog
+
+20 March 2020: updated for new ILI data
 
 13 March 2020: updated for new ILI data, including interpretation about Missouri.
 
