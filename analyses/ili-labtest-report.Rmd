@@ -342,6 +342,39 @@ plot_state <- function(state_name, data=all_data_state_z) {
 }
 ```
 
+
+```{r state-unweighted-ili-by-pos-neg, fig.cap="Figure showing inferred breakdown of unweighted ILI into ILI that is positive and negative for influenza.  Unweighted ILI positive for influenza is calculated as the product of Unweighted ILI and the proportion of laboratory tests positive for influenza."}
+temp_data <- all_data_state_current_season %>%
+  dplyr::transmute(
+    region = region,
+    week_start = week_start,
+    unweighted_ili_positive = unweighted_ili * as.numeric(percent_positive) / 100,
+    unweighted_ili_negative = unweighted_ili * (100 - as.numeric(percent_positive)) / 100,
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c("unweighted_ili_positive", "unweighted_ili_negative"),
+    names_to = "pos_neg",
+    names_prefix = "unweighted_ili_",
+    values_to = "unweighted_ili_pos_neg"
+  )
+
+ggplot() +
+  geom_area(
+    data = temp_data,
+    mapping = aes(x = week_start, y = unweighted_ili_pos_neg, fill = pos_neg),
+    stat = "identity"
+  ) +
+  geom_point(
+    data = all_data_state_current_season,
+    mapping = aes(x = week_start, y = unweighted_ili)) +
+  geom_line(
+    data = all_data_state_current_season,
+    mapping = aes(x = week_start, y = unweighted_ili, group = region)) +
+  ylab("Unweighted ILI") +
+  scale_fill_viridis_d("Influenza\nTest Result", begin = 0.2, end = 0.8, option = "D") +
+  facet_wrap(~ region, scales = "free_y")
+```
+
 ```{r get-sd-data, fig.height=6, fig.cap="Selected individual state-level plots showing the proportion of ILI not due to influenza over the current 2019/2020 season (dark black line) and past 9 seasons, starting with 2010/2011. "}
 grid.arrange(plot_state("California"),
   plot_state("Washington"),
@@ -371,7 +404,9 @@ write_csv(all_data_state_z, path=state_filename)
 
 ## Changelog
 
-39 March 2020: updateed for new ILI data, and reframed the introduction to acknowledge community transmission in the US.
+20 March 2020: Added figure to state level analysis showing estimated breakdown of unweighted ILI into unweighted ILI positive for or negative for influenza.
+
+19 March 2020: updateed for new ILI data, and reframed the introduction to acknowledge community transmission in the US.
 
 13 March 2020: updated for new ILI data, including interpretation about Missouri.
 
