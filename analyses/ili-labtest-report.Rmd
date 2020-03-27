@@ -25,7 +25,7 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are over 234,000 confirmed cases globally and at least 9,840 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
+In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are over 460,000 confirmed cases globally and at least 20,834 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
 
 Community transmission is now ongoing in many locations in the United States. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. However, due to delays in making widespread diagnostic testing available, the burden of COVID-19 in the United States is not well understood. As an effort to understand trends in people seeking care for respiratory symptoms, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that SARS-CoV-2 were causing widespread disease in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
@@ -96,7 +96,7 @@ We note that a limitation of this metric is that wILI values can be quite small,
 We developed a metric to measure the degree to which a given ILI- observation is significantly higher or lower than expectation, based on past trends at similar times of the year. For each region and season-week, we averaged observations from the past seasons (22 seasons for regions, 9 for states) for the given season week and one season week on either side and calculated the standard deviation based on these same observations. We then computed "z-scores" as the number of standard deviations above or below the average a particular rILI- observation is:
 $$\text{Z} =  \frac{\text{rILI-} - \overline{\text{rILI-}}}{sd{\text{rILI-}}}$$
 
-```{r get-all-reg-data, eval=FALSE}
+```{r get-all-reg-data, eval=TRUE}
 ## regional level
 dat <- ilinet(region = "hhs")# %>% filter(region=="Region 10")
 labdat <- who_nrevss(region = "hhs") 
@@ -121,7 +121,7 @@ alldat <- alldat %>%
 alldat$regionnew <- factor(alldat$region, levels=paste0("hhs", 1:10), ordered=TRUE)
 ```
 
-```{r tmp-fix}
+```{r tmp-fix, eval=FALSE}
 alldat <- readRDS("ili-data/alldat-2020-03-20.rds")
 ```
 
@@ -138,7 +138,7 @@ We plotted ILI- and rILI- as a function of the week within each flu season and s
 <!-- swapped out 1/26/2019: Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020. -->
 
 <!-- the below two paragraphs added on 1/26/2020, revised on 2/16/2020-->
-In the last weeks of 2019 and first weeks of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) have been, relative to what has been observed in the past 22 seasons, above the seasonal average. More recently, the measures of rILI- also have risen to more than 3 standard deviations above the average in some regions (Figure 3).
+In the last weeks of 2019 and through January and February of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) were largely consistent with trends in the past 22 seasons. More recently, the measures of rILI- have risen to more than 3 standard deviations above the seasonal average in every HHS region of the US (Figure 3). The first week where every region in the US showed this highest level of activity was for the week of March 15 through March 21, 2020.
 
 These results suggest that there may be enough COVID-19 circulating in the United States to be detectable in the influenza-like illness surveillance system. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons. Also, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread COVID-19 transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
 
@@ -244,23 +244,23 @@ ggplot(filter(region_data, season=="2019/2020")) +
 
 ### State-level analyses
 
-The z-score calculations show six states with systematically higher than average observations (Figure 4). We think many of these may be spurious, due to other systematic differences in reporting for this season. Although at this time we do not have specific data to support or refute this hypothesis. 
+<!-- The z-score calculations show six states with systematically higher than average observations (Figure 4). We think many of these may be spurious, due to other systematic differences in reporting for this season. Although at this time we do not have specific data to support or refute this hypothesis. -->
 
 <!-- We specifically compare two states with levels of community transmission in the US, California and Washington (Figure 5). In California, levels of ILI not due to influenza (rILI-) have been increasing in recent weeks and were higher than they have ever been in February, although on par with peaks in other seasons. In Washington, no anomalous levels of rILI- have been detected in 2020. -->
 
-We note an increased signal in Missouri, Pennsylvania, Arizona, California, Massachusetts, and West Virginia (Figure 5). California and Washington are known to have community transmission of SARS-CoV-2, but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
+We note an increased signal in over 15 states (Figure 4). As of writing, numerous states are known to have community transmission of SARS-CoV-2, but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
 
-Missouri has recorded relatively few cases of COVID-19 to date. We note that only 9 providers contributed data to the ILI surveillance network in the most recent week of data compared to 11 to 13 in earlier weeks. Provider type (e.g. pediatrician, hospital) is known to influence ILI data. If there are systematic differences in the population seeking care at different providers, that could explain the recently observed spike. We have been in touch with the Missouri Department of Health. They are aware of our finding and have confirmed that they are carefully monitoring for SARS-CoV-2 activity.
+Numerous factors may be responsible for the rise in our estimates of ILI caused by something other than influenza (rILI-). Provider type (e.g. pediatrician, hospital) is known to influence ILI data. In recent weeks, some clinics that provide data to the ILINet system have not reported data. If there are systematic differences in the population seeking care at different providers, that could explain the recently observed changes in ILI. Additionally, changes in testing protocols for influenza could also impact how the accurately the percentage of ILI due to influenza is estimated.
 
-In recent weeks, several states have had an uptick in ILI while simultaneously experiencing a decrease in the percentage of influenza tests that are positive (Figure 6). 
-These trends are also suggestive of widespread circulation of an ILI-causing pathogen that is not influenza.
+However, in recent weeks, several states have had an uptick in ILI while simultaneously experiencing a decrease in the percentage of influenza tests that are positive (Figure 6). 
+Notwithstanding some of the caveats listed above, these trends are consistent with what we might expect to see if there were widespread circulation of an ILI-causing pathogen that is not influenza.
 
 Syndromic surveillance data is best used to guide further investigation, not as a definitive source. 
 Additional study is needed to understand the burden of SARS-CoV-2 across U.S. states. 
 However, we believe that this analysis could be used to guide and target areas for further investigation
 
 
-```{r get-all-state-data, eval=FALSE}
+```{r get-all-state-data, eval=TRUE}
 ## state level
 state_dat <- ilinet(region = "state")# %>% filter(region=="Region 10")
 ##california <- state_dat[state_dat$region == "California",]
@@ -283,7 +283,7 @@ all_data_state <- all_data_state %>% left_join(state_baselines)
 all_data_state$rili_minus <- (100 - as.numeric(as.character(all_data_state$percent_positive))) * (all_data_state$unweighted_ili/all_data_state$baseline) / 100
 ```
 
-```{r tmp-state-fix}
+```{r tmp-state-fix, eval=FALSE}
 all_data_state <- readRDS("ili-data/all_data_state-2020-03-20.rds")
 ```
 
@@ -362,14 +362,14 @@ plot_state <- function(state_name, data=all_data_state_z) {
 ```
 
 
-```{r get-sd-data, fig.height=9, fig.cap="Selected individual state-level plots showing the proportion of ILI not due to influenza over the current 2019/2020 season (dark black line) and past 9 seasons, starting with 2010/2011. "}
+```{r get-sd-data, fig.height=9, fig.cap="Individual state-level plots showing the proportion of ILI not due to influenza over the current 2019/2020 season (dark black line) and past 9 seasons, starting with 2010/2011. The six states with highest current rILI- values relative to baseline are shown here."}
 grid.arrange(
-  plot_state("Missouri"),
-  plot_state("Pennsylvania"),
-  plot_state("Arizona"),
-  plot_state("California"),
   plot_state("Massachusetts"),
-  plot_state("West Virginia"),
+  plot_state("Pennsylvania"),
+  plot_state("California"),
+  plot_state("Illinois"),
+  plot_state("Missouri"),
+  plot_state("Wisconsin"),
   nrow=3, ncol=3)
 ```
 
@@ -429,6 +429,8 @@ write_csv(all_data_state_z, path=state_filename)
 \clearpage
 
 ## Changelog
+
+27 March 2020: updated for new ILI data.
 
 20 March 2020: Added figure to state level analysis showing estimated breakdown of unweighted ILI into unweighted ILI positive for or negative for influenza. Updated for new ILI data, and reframed the introduction to acknowledge community transmission in the US and discussion to accomodate new results.
 
