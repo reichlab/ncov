@@ -25,7 +25,7 @@ theme_set(theme_bw())
 
 ## Introduction 
 
-In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are over 460,000 confirmed cases globally and at least 20,834 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
+In December 2019, an outbreak of a novel, the SARS-CoV-2 coronavirus was detected in Wuhan, China. In the intervening weeks, case counts have grown substantially. As of this writing, there are over 896,450 confirmed cases globally and at least 45,525 deaths from what is currently named COVID-19 [1]. It is now understood that the virus transmits efficiently from person to person, with unmitigated R0 estimates above 2 and perhaps as high as 3.7 [2, 3].
 
 Community transmission is now ongoing in many locations in the United States. Emerging phylogenetic data suggest that sequenced cases to date in the United States and globally share a common ancestor between mid-November and mid-December 2019. However, due to delays in making widespread diagnostic testing available, the burden of COVID-19 in the United States is not well understood. As an effort to understand trends in people seeking care for respiratory symptoms, we analyze publicly available data on influenza-like illness in the US. Specifically, we compare the proportion of weighted influenza like illness (wILI) that tests negative for influenza during the 2019-2020 flu season to trends from previous seasons. If it were the case that SARS-CoV-2 were causing widespread disease in the United States, we might expect to see in recent weeks a higher fraction of ILI specimens that test negative for influenza compared to the same time in past seasons.
 
@@ -138,9 +138,10 @@ We plotted ILI- and rILI- as a function of the week within each flu season and s
 <!-- swapped out 1/26/2019: Although these findings are far from conclusive, these preliminary observations do not support a scenario of a high burden of 2019-nCoV in the United States as of mid-January 2020. -->
 
 <!-- the below two paragraphs added on 1/26/2020, revised on 2/16/2020-->
-In the last weeks of 2019 and through January and February of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) were largely consistent with trends in the past 22 seasons. More recently, the measures of rILI- have risen to more than 3 standard deviations above the seasonal average in every HHS region of the US (Figure 3). The first week where every region in the US showed this highest level of activity was for the week of March 15 through March 21, 2020.
+<!-- In the last weeks of 2019 and through January and February of 2020, the observations of ILI burden due to non-influenza pathogens (rILI-) were largely consistent with trends in the past 22 seasons. More recently, the measures of rILI- have risen to more than 3 standard deviations above the seasonal average in every HHS region of the US (Figure 3). The first week where every region in the US showed this highest level of activity was for the week of March 15 through March 21, 2020.
+--> 
 
-These results suggest that there may be enough COVID-19 circulating in the United States to be detectable in the influenza-like illness surveillance system. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons. Also, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread COVID-19 transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric.
+These results suggest that there may be enough COVID-19 circulating in the United States to be detectable in the influenza-like illness surveillance system. However, it is hard to determine this conclusively, as we have not performed an exhaustive analysis about what other pathogens were or were not ciruclating in those past seasons. Also, media attention could also drive more individuals with mild influenza-like illness symptoms to seek care than usual even in the absence of widespread COVID-19 transmission in the US. If these additional individuals seeking care were more likely to have an illness not caused by influenza, then this could also drive up the rILI- metric. Additionally, changes in influenza testing protocols or patterns could also cause systematic changes in how the fraction of positive tests compares to prior weeks or seasons.
 
 
 
@@ -248,11 +249,11 @@ ggplot(filter(region_data, season=="2019/2020")) +
 
 <!-- We specifically compare two states with levels of community transmission in the US, California and Washington (Figure 5). In California, levels of ILI not due to influenza (rILI-) have been increasing in recent weeks and were higher than they have ever been in February, although on par with peaks in other seasons. In Washington, no anomalous levels of rILI- have been detected in 2020. -->
 
-We note an increased signal in over 15 states (Figure 4). As of writing, numerous states are known to have community transmission of SARS-CoV-2, but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
+Some states show an increased signal of non-influenza related ILI (Figure 4). As of writing, numerous states are known to have community transmission of SARS-CoV-2, but from this analysis alone we are not able to determine whether that is contributing to the observed signal in rILI-.
 
 Numerous factors may be responsible for the rise in our estimates of ILI caused by something other than influenza (rILI-). Provider type (e.g. pediatrician, hospital) is known to influence ILI data. In recent weeks, some clinics that provide data to the ILINet system have not reported data. If there are systematic differences in the population seeking care at different providers, that could explain the recently observed changes in ILI. Additionally, changes in testing protocols for influenza could also impact how the accurately the percentage of ILI due to influenza is estimated.
 
-However, in recent weeks, several states have had an uptick in ILI while simultaneously experiencing a decrease in the percentage of influenza tests that are positive (Figure 6). 
+One can visually inspect the relationship between ILI levels simultaneously compared to the percentage of influenza tests that are positive (Figure 6). 
 Notwithstanding some of the caveats listed above, these trends are consistent with what we might expect to see if there were widespread circulation of an ILI-causing pathogen that is not influenza.
 
 Syndromic surveillance data is best used to guide further investigation, not as a definitive source. 
@@ -367,9 +368,9 @@ grid.arrange(
   plot_state("Massachusetts"),
   plot_state("Pennsylvania"),
   plot_state("California"),
-  plot_state("Illinois"),
+  plot_state("New York"),
+  plot_state("Washington"),
   plot_state("Missouri"),
-  plot_state("Wisconsin"),
   nrow=3, ncol=3)
 ```
 
@@ -429,6 +430,8 @@ write_csv(all_data_state_z, path=state_filename)
 \clearpage
 
 ## Changelog
+
+3 April 2020: updated for new ILI data, modified some conclusions to be more generic for easier updating later.
 
 27 March 2020: updated for new ILI data.
 
